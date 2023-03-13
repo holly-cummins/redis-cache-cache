@@ -7,4 +7,5 @@
 ### Potential models:
 
 - https://github.com/sa-mw-dach/bobbycar
-- Quinoa car demo
+- [Quinoa car demo](https://github.com/kdubois/quinoa-wind-turbine/)
+![image](https://user-images.githubusercontent.com/11509290/224729777-0e974eb2-1c76-4afb-9296-0c770bfd1159.png)
