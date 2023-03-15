@@ -1,0 +1,3 @@
+JSON.SET soapbox:raving-rabbits $ '{ "name": "raving rabbits", "picture": "...", "speed": 30, "robustness": 10}'
+JSON.SET soapbox:shark $ '{ "name": "shark", "picture": "...", "speed": 20, "robustness": 15}'
+JSON.SET soapbox:super-cucumber $ '{ "name": "super cucumber", "picture": "...", "speed": 10, "robustness": 20}'
