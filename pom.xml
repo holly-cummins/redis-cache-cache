@@ -32,5 +32,6 @@
 
   <modules>
     <module>soapbox-service</module>
+    <module>player-service</module>
   </modules>
 </project>
