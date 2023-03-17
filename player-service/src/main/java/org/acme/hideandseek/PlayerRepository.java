@@ -43,7 +43,7 @@ public class PlayerRepository {
     }
 
     boolean update(String id, Player player) {
-        // Check-AndSet pattern
+        // Check-And-Set pattern
         return !redis.withTransaction(
                         // Before the transaction, get the existing player
                         con -> con.hash(Player.class).hget(PLAYER_KEY, id),
