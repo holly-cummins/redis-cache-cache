@@ -1,15 +1,28 @@
 package org.acme.hideandseek.agent;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+
 public class GameEvent {
     public final Kind kind;
     public final String gameId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public final String hider;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public final String seeker;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public final String place;
-    public final boolean seekerWon;
-    public final int duration;
-    public final double distance;
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    public final Optional<Boolean> seekerWon;
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    public final OptionalInt duration;
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    public final OptionalDouble distance;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public final String destination;
 
     @SuppressWarnings("unused")
@@ -19,10 +32,10 @@ public class GameEvent {
         this.hider = null;
         this.place = null;
         this.seeker = null;
-        this.seekerWon = false;
+        this.seekerWon = Optional.empty();
         this.destination = null;
-        this.distance = -1;
-        this.duration = -1;
+        this.distance = OptionalDouble.empty();
+        this.duration = OptionalInt.empty();
     }
 
     public GameEvent(Kind kind, String gameId, String hiderName, String hidingPlace) {
@@ -31,10 +44,10 @@ public class GameEvent {
         this.hider = hiderName;
         this.place = hidingPlace;
         this.seeker = null;
-        this.seekerWon = false;
+        this.seekerWon = Optional.empty();
         this.destination = null;
-        this.distance = -1;
-        this.duration = -1;
+        this.distance = OptionalDouble.empty();
+        this.duration = OptionalInt.empty();
     }
 
     public GameEvent(Kind kind, String gameId, String seeker) {
@@ -43,10 +56,10 @@ public class GameEvent {
         this.seeker = seeker;
         this.place = null;
         this.hider = null;
-        this.seekerWon = false;
+        this.seekerWon = Optional.empty();
         this.destination = null;
-        this.distance = -1;
-        this.duration = -1;
+        this.distance = OptionalDouble.empty();
+        this.duration = OptionalInt.empty();
     }
 
     public GameEvent(Kind kind, String gameId, boolean seekerWon) {
@@ -55,10 +68,10 @@ public class GameEvent {
         this.seeker = null;
         this.place = null;
         this.hider = null;
-        this.seekerWon = seekerWon;
+        this.seekerWon = Optional.of(seekerWon);
         this.destination = null;
-        this.distance = -1;
-        this.duration = -1;
+        this.distance = OptionalDouble.empty();
+        this.duration = OptionalInt.empty();
     }
 
     public GameEvent(Kind kind, String gameId, String seeker, String hider, String place) {
@@ -67,10 +80,10 @@ public class GameEvent {
         this.seeker = seeker;
         this.place = place;
         this.hider = hider;
-        this.seekerWon = false;
+        this.seekerWon = Optional.empty();
         this.destination = null;
-        this.distance = -1;
-        this.duration = -1;
+        this.distance = OptionalDouble.empty();
+        this.duration = OptionalInt.empty();
     }
 
     public GameEvent(Kind kind, String gameId, String seeker, String position, String destination, double distance, int duration) {
@@ -79,10 +92,10 @@ public class GameEvent {
         this.seeker = seeker;
         this.place = position;
         this.destination = destination;
-        this.distance = distance;
-        this.duration = duration;
+        this.seekerWon = Optional.empty();
+        this.distance = OptionalDouble.of(distance);
+        this.duration = OptionalInt.of(duration);
         this.hider = null;
-        this.seekerWon = false;
     }
 
     enum Kind {
