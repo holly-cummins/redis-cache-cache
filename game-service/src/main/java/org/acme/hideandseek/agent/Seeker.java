@@ -15,18 +15,18 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Seeker implements Runnable {
-    private final static Logger LOGGER = Logger.getLogger("Seeker");
+    protected final static Logger LOGGER = Logger.getLogger("Seeker");
 
     public final Player player;
-    private final ListCommands<String, Event> queues;
+    protected final ListCommands<String, Event> queues;
     private final Iterator<String> placesToVisit;
     public final String inbox;
-    public final String game;
-    private final RedisDataSource redis;
-    private final PubSubCommands<GameEvent> events;
-    public String position;
+    protected final String game;
+    protected final RedisDataSource redis;
+    protected final PubSubCommands<GameEvent> events;
+    protected String position;
 
-    private volatile boolean done;
+    protected volatile boolean done;
 
     public Seeker(Player player, String gameId, List<String> places, RedisDataSource redis) {
         this.player = player;

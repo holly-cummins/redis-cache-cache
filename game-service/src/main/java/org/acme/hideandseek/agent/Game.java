@@ -3,7 +3,7 @@ package org.acme.hideandseek.agent;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.list.ListCommands;
 import io.quarkus.redis.datasource.pubsub.PubSubCommands;
-import io.quarkus.redis.datasource.sortedset.SortedSetCommands;
+import org.acme.hideandseek.LeaderboardService;
 import org.acme.hideandseek.Player;
 import org.jboss.logging.Logger;
 
@@ -20,20 +20,20 @@ public class Game implements Runnable {
     private final static Logger LOGGER = Logger.getLogger("Game");
     public final String id = UUID.randomUUID().toString();
     private final List<Player> players;
-    private final SortedSetCommands<String, Player> leaderboard;
     private final ListCommands<String, Event> queues;
     private final PubSubCommands<GameEvent> events;
     private final Seeker seeker;
     private final List<Hider> hiders = new ArrayList<>();
+    protected final LeaderboardService leaderboard;
 
     private volatile boolean done;
 
-    public Game(Collection<Player> players, List<String> places, RedisDataSource redis) {
+    public Game(Collection<Player> players, List<String> places, LeaderboardService leaderboard, RedisDataSource redis) {
         // Redis objects
         // to read from the "game" queue and write to the "seeker" queue.
         this.queues = redis.list(Event.class);
-        // to keep track of the score
-        this.leaderboard = redis.sortedSet(Player.class);
+        this.leaderboard = leaderboard;
+
         // commands to broadcast events
         this.events = redis.pubsub(GameEvent.class);
 
@@ -44,7 +44,8 @@ public class Game implements Runnable {
         Random random = new Random();
         // Pick random seeker
         int index = random.nextInt(this.players.size() - 1);
-        this.seeker = new Seeker(this.players.get(index), id, places, redis);
+        //this.seeker = new Seeker(this.players.get(index), id, places, redis);
+        this.seeker = new AdvancedSeeker(this.players.get(index), id, places, redis);
         LOGGER.infof("The seeker is %s", this.seeker.player.name());
         // Others are going to hide
         var copy = new ArrayList<>(players);
@@ -102,10 +103,10 @@ public class Game implements Runnable {
 
     private void updateScores(List<Hider> hidersNotDiscovered) {
         // seeker = number of found players -1 (the seeker)
-        leaderboard.zincrby("leaderboard", players.size() - hidersNotDiscovered.size() -1, seeker.player);
+        leaderboard.increment(seeker.player, players.size() - hidersNotDiscovered.size() - 1);
         // not discovered players: + 1
         for (Hider hider : hidersNotDiscovered) {
-            leaderboard.zincrby("leaderboard", 1, hider.player);
+            leaderboard.increment(hider.player, 1);
         }
     }
 
