@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --passWithNoTests",
     "build": "webpack --mode=production",
     "start": "webpack-dev-server --mode=development --port 3000"
   },
@@ -13,9 +13,12 @@
     "theaterjs": "3.2.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "copy-webpack-plugin": "^10.2.4",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.0",
-    "copy-webpack-plugin": "^10.2.4"
+    "webpack-dev-server": "^4.9.0"
   }
 }
