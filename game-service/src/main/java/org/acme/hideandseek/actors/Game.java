@@ -1,10 +1,12 @@
-package org.acme.hideandseek.agent;
+package org.acme.hideandseek.actors;
 
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.list.ListCommands;
 import io.quarkus.redis.datasource.pubsub.PubSubCommands;
-import org.acme.hideandseek.LeaderboardService;
-import org.acme.hideandseek.Player;
+import org.acme.hideandseek.model.Event;
+import org.acme.hideandseek.model.GameCompletedEvent;
+import org.acme.hideandseek.model.GameEvent;
+import org.acme.hideandseek.model.Player;
 import org.jboss.logging.Logger;
 
 import java.time.Duration;
@@ -24,18 +26,18 @@ public class Game implements Runnable {
     private final PubSubCommands<GameEvent> events;
     private final Seeker seeker;
     private final List<Hider> hiders = new ArrayList<>();
-    protected final LeaderboardService leaderboard;
+    private final PubSubCommands<GameCompletedEvent> completed;
 
     private volatile boolean done;
 
-    public Game(Collection<Player> players, List<String> places, LeaderboardService leaderboard, RedisDataSource redis) {
+    public Game(Collection<Player> players, List<String> places, RedisDataSource redis) {
         // Redis objects
         // to read from the "game" queue and write to the "seeker" queue.
         this.queues = redis.list(Event.class);
-        this.leaderboard = leaderboard;
 
         // commands to broadcast events
         this.events = redis.pubsub(GameEvent.class);
+        this.completed = redis.pubsub(GameCompletedEvent.class);
 
         LOGGER.infof("New game with %d players and %d places", players.size(), places.size());
         LOGGER.infof("Initializing game %s", id);
@@ -66,7 +68,7 @@ public class Game implements Runnable {
         seeker.start();
 
         // Send game started event to the seeker
-        this.queues.lpush(seeker.inbox, Event.gameStarted(getStartingPoint()));
+        this.queues.lpush(seeker.inbox, Event.gameStarted("Devoxx"));
         this.events.publish("game-events", new GameEvent(GameEvent.Kind.NEW_GAME, id, seeker.player.name()));
         initTimesUp();
 
@@ -88,8 +90,17 @@ public class Game implements Runnable {
         // Send the "end" event to the seeker
         queues.lpush(seeker.inbox, Event.gameEnded());
 
-        // Compute the score
-        var notDiscovered = hiders.stream().filter(hider -> !hider.hasBeenDiscovered()).collect(Collectors.toList());
+        var notDiscovered = hiders.stream().filter(hider -> !hider.hasBeenDiscovered()).toList();
+
+        // Communication with the leaderboard
+        GameCompletedEvent event = new GameCompletedEvent();
+        event.nonDiscoveredPlayers = notDiscovered.size();
+        event.hiders = hiders.stream().map(h -> h.player.name()).collect(Collectors.toList());
+        event.seeker = seeker.player.name();
+        // Broadcast
+        this.completed.publish("game:completed", event);
+
+        // Communication with the UI
         if (notDiscovered.isEmpty()) {
             LOGGER.info("The seeker has won!");
             this.events.publish("game-events", new GameEvent(GameEvent.Kind.GAME_OVER, id, true));
@@ -97,21 +108,6 @@ public class Game implements Runnable {
             LOGGER.infof("The seeker didn't find everyone, %d players not discovered", notDiscovered.size());
             this.events.publish("game-events", new GameEvent(GameEvent.Kind.GAME_OVER, id, false));
         }
-
-        updateScores(notDiscovered);
-    }
-
-    private void updateScores(List<Hider> hidersNotDiscovered) {
-        // seeker = number of found players -1 (the seeker)
-        leaderboard.increment(seeker.player, players.size() - hidersNotDiscovered.size() - 1);
-        // not discovered players: + 1
-        for (Hider hider : hidersNotDiscovered) {
-            leaderboard.increment(hider.player, 1);
-        }
-    }
-
-    public String getStartingPoint() {
-        return "Devoxx"; // TODO Configuration?
     }
 
     public void seekerAtPlace(String place) {

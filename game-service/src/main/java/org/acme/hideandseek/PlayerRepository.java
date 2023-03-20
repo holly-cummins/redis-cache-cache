@@ -2,10 +2,10 @@ package org.acme.hideandseek;
 
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.hash.HashCommands;
+import org.acme.hideandseek.model.Player;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class PlayerRepository {

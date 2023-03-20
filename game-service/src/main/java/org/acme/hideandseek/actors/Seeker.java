@@ -1,11 +1,13 @@
-package org.acme.hideandseek.agent;
+package org.acme.hideandseek.actors;
 
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.geo.GeoUnit;
 import io.quarkus.redis.datasource.list.KeyValue;
 import io.quarkus.redis.datasource.list.ListCommands;
 import io.quarkus.redis.datasource.pubsub.PubSubCommands;
-import org.acme.hideandseek.Player;
+import org.acme.hideandseek.model.Event;
+import org.acme.hideandseek.model.GameEvent;
+import org.acme.hideandseek.model.Player;
 import org.jboss.logging.Logger;
 
 import java.time.Duration;
