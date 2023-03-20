@@ -18,7 +18,9 @@ public class LeaderboardService {
     public LeaderboardService(RedisDataSource redis) {
         this.redis = redis;
         this.redis.pubsub(GameCompletedEvent.class)
-                .subscribe("game:completed", this::updateScore);
+                .subscribe("game:completed", event -> {
+                    Thread.ofVirtual().start(() -> updateScore(event));
+                });
     }
 
     private void updateScore(GameCompletedEvent event) {

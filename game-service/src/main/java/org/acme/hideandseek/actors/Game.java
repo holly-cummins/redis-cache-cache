@@ -21,7 +21,6 @@ public class Game implements Runnable {
 
     private final static Logger LOGGER = Logger.getLogger("Game");
     public final String id = UUID.randomUUID().toString();
-    private final List<Player> players;
     private final ListCommands<String, Event> queues;
     private final PubSubCommands<GameEvent> events;
     private final Seeker seeker;
@@ -29,6 +28,7 @@ public class Game implements Runnable {
     private final PubSubCommands<GameCompletedEvent> completed;
 
     private volatile boolean done;
+    private volatile long begin;
 
     public Game(Collection<Player> players, List<String> places, RedisDataSource redis) {
         // Redis objects
@@ -42,15 +42,14 @@ public class Game implements Runnable {
         LOGGER.infof("New game with %d players and %d places", players.size(), places.size());
         LOGGER.infof("Initializing game %s", id);
 
-        this.players = new ArrayList<>(players);
+        List<Player> copy = new ArrayList<>(players);
         Random random = new Random();
         // Pick random seeker
-        int index = random.nextInt(this.players.size() - 1);
+        int index = random.nextInt(copy.size() - 1);
         //this.seeker = new Seeker(this.players.get(index), id, places, redis);
-        this.seeker = new AdvancedSeeker(this.players.get(index), id, places, redis);
+        this.seeker = new AdvancedSeeker(copy.get(index), id, places, redis);
         LOGGER.infof("The seeker is %s", this.seeker.player.name());
         // Others are going to hide
-        var copy = new ArrayList<>(players);
         copy.remove(this.seeker.player);
         for (Player player : copy) {
             Hider hider = new Hider(player, places);
@@ -65,6 +64,7 @@ public class Game implements Runnable {
     }
 
     public void run() {
+        begin = System.currentTimeMillis();
         seeker.start();
 
         // Send game started event to the seeker
@@ -87,6 +87,7 @@ public class Game implements Runnable {
 
     public void onGameEnd() {
         done = true;
+        var duration = System.currentTimeMillis() - begin;
         // Send the "end" event to the seeker
         queues.lpush(seeker.inbox, Event.gameEnded());
 
@@ -97,6 +98,7 @@ public class Game implements Runnable {
         event.nonDiscoveredPlayers = notDiscovered.size();
         event.hiders = hiders.stream().map(h -> h.player.name()).collect(Collectors.toList());
         event.seeker = seeker.player.name();
+        event.duration = duration;
         // Broadcast
         this.completed.publish("game:completed", event);
 

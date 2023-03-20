@@ -16,10 +16,10 @@ public class PlaceRepository {
 
     private final RedisDataSource redis;
 
-    @ConfigProperty(name = "hide-and-seek.starting-point.radius")
+    @ConfigProperty(name = "hide-and-seek.starting-point.radius", defaultValue = "100")
     double startingPointRadius;
 
-    @ConfigProperty(name = "hide-and-seek.starting-point.name")
+    @ConfigProperty(name = "hide-and-seek.starting-point.name", defaultValue = "Devoxx")
     String startingPointName;
 
     PlaceRepository(RedisDataSource redis) {

@@ -36,6 +36,7 @@
     <module>place-service</module>
     <module>leaderboard-service</module>
     <module>game-service</module>
+    <module>game-monitoring-service</module>
     <module>frontend</module>
   </modules>
 </project>

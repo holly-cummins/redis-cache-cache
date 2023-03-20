@@ -1,4 +1,4 @@
-package org.acme.hideandseek.model;
+package org.acme.hideandseek.monitoring;
 
 import java.util.List;
 
