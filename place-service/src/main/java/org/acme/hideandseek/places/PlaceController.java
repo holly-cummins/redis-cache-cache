@@ -1,6 +1,6 @@
-package org.acme.hideandseek;
+package org.acme.hideandseek.places;
 
-import io.quarkus.redis.datasource.geo.GeoValue;
+import org.jboss.resteasy.reactive.RestQuery;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +18,11 @@ public class PlaceController {
     @GetMapping(path = "/places")
     public List<Place> getAllPlaces() {
         return repository.getPlaces();
+    }
+
+    @GetMapping(path = "/places/search")
+    public List<Place> search(@RestQuery String query) {
+        return repository.search(query);
     }
 
 }

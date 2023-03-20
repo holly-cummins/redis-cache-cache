@@ -1,4 +1,4 @@
-package org.acme.hideandseek.agent;
+package org.acme.hideandseek.model;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -98,7 +98,7 @@ public class GameEvent {
         this.hider = null;
     }
 
-    enum Kind {
+    public enum Kind {
         HIDER,
         NEW_GAME,
         GAME_OVER,

@@ -33,6 +33,8 @@
   <modules>
     <module>soapbox-service</module>
     <module>player-service</module>
+    <module>place-service</module>
+    <module>leaderboard-service</module>
     <module>game-service</module>
   </modules>
 </project>

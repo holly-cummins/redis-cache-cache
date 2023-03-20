@@ -1,10 +1,8 @@
-package org.acme.hideandseek.agent;
+package org.acme.hideandseek.actors;
 
-import org.acme.hideandseek.Player;
+import org.acme.hideandseek.model.Player;
 import org.jboss.logging.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 

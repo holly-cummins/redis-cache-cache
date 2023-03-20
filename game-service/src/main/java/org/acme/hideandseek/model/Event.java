@@ -1,10 +1,8 @@
-package org.acme.hideandseek.agent;
+package org.acme.hideandseek.model;
 
-import org.acme.hideandseek.Place;
-
-import static org.acme.hideandseek.agent.Event.EventKind.GAME_ENDED;
-import static org.acme.hideandseek.agent.Event.EventKind.GAME_STARTED;
-import static org.acme.hideandseek.agent.Event.EventKind.SEEKER_AT_POSITION;
+import static org.acme.hideandseek.model.Event.EventKind.GAME_ENDED;
+import static org.acme.hideandseek.model.Event.EventKind.GAME_STARTED;
+import static org.acme.hideandseek.model.Event.EventKind.SEEKER_AT_POSITION;
 
 public class Event {
 
@@ -37,7 +35,7 @@ public class Event {
         return new Event(EventKind.TIMES_UP, null);
     }
 
-    enum EventKind {
+    public enum EventKind {
         // Received by the seeker
         GAME_STARTED,
         GAME_ENDED,
