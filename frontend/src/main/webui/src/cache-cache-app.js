@@ -1,12 +1,8 @@
 import { LitElement, html, css } from 'lit';
 
-const logo = new URL('../assets/open-wc-logo.svg', import.meta.url).href;
+const logo = new URL('../assets/super-cucumber.png', import.meta.url).href;
 
 class CacheCacheApp extends LitElement {
-  static properties = {
-    header: { type: String },
-  };
-
   static styles = css`
     :host {
       min-height: 100vh;
@@ -58,29 +54,11 @@ class CacheCacheApp extends LitElement {
   render() {
     return html`
       <main>
-        <div class="logo"><img alt="open-wc logo" src=${logo} /></div>
-        <h1>${this.header}</h1>
-
-        <p>Edit <code>src/CacheCacheApp.js</code> and save to reload.</p>
-        <a
-          class="app-link"
-          href="https://open-wc.org/guides/developing-components/code-examples/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Code examples
-        </a>
+        <h1>Salut! C'est cache-cache!</h1>
+        <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
       </main>
 
-      <p class="app-footer">
-        🚽 Made with love by
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/open-wc"
-          >open-wc</a
-        >.
-      </p>
+      <p class="app-footer"></p>
     `;
   }
 }
