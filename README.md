@@ -1,11 +1,67 @@
-# redis-caisses-a-savon
+# Redis Cache Cache
 
-![image](https://user-images.githubusercontent.com/11509290/224686185-36bc34d9-e3b0-4dda-975a-73d748767964.png)
+## Running instructions
 
-![image](https://user-images.githubusercontent.com/11509290/224686403-8636e2ec-6c71-475c-8d63-100daad4503a.png)
+### Prerequisites
 
-### Potential models:
+- Apache Maven
+- Java 19
+- Docker
 
-- https://github.com/sa-mw-dach/bobbycar
-- [Quinoa car demo](https://github.com/kdubois/quinoa-wind-turbine/)
-![image](https://user-images.githubusercontent.com/11509290/224729777-0e974eb2-1c76-4afb-9296-0c770bfd1159.png)
+First, start Redis using `./start-redis`
+
+### Player service
+
+```shell
+> mvn clean package
+> java -jar target/quarkus-app/quarkus-run.jar
+```
+
+### Place service
+
+```shell
+> mvn clean package
+> java -jar target/quarkus-app/quarkus-run.jar
+```
+
+### Leaderboard service
+
+```shell
+> mvn clean package
+> java --enable-preview -jar target/quarkus-app/quarkus-run.jar
+```
+
+### Monitoring service
+
+```shell
+> mvn clean package
+> java --enable-preview -jar target/quarkus-app/quarkus-run.jar
+```
+
+### Game service
+
+```shell
+> mvn clean package
+> java --enable-preview -jar target/quarkus-app/quarkus-run.jar
+```
+
+### Seeker Service
+
+You can run only one seeker at a time.
+So pick one:
+
+- seeker-service - random pick of the next destination
+- super-seeker-service - graph based decision to always select the closest destination
+
+```shell
+> mvn clean package
+> java --enable-preview -jar target/quarkus-app/quarkus-run.jar
+```
+
+### HTTP commands
+
+1. Start a game: `http POST :8091/games`
+2. Game event stream `http :8091/games/events`
+3. Monitoring event stream `http :8094/monitoring`
+
+

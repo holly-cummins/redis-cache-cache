@@ -10,8 +10,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>leaderboard-service</artifactId>
-
+    <artifactId>super-seeker-service</artifactId>
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -115,4 +114,6 @@
             </properties>
         </profile>
     </profiles>
+
+
 </project>

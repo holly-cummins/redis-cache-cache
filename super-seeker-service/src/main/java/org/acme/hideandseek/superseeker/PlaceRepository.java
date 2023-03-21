@@ -1,8 +1,7 @@
-package org.acme.hideandseek;
+package org.acme.hideandseek.superseeker;
 
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.geo.GeoSearchArgs;
-import org.acme.hideandseek.model.Place;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.springframework.stereotype.Service;
 
@@ -26,19 +25,12 @@ public class PlaceRepository {
         this.redis = redis;
     }
 
-    List<Place> getPlaces() {
+    List<String> getPlaceNames() {
         var list = redis.geo(String.class).geosearch("places_geo",
                 new GeoSearchArgs<String>().fromMember(startingPointName)
-                        .byRadius(startingPointRadius, KM)
-                        .withDistance()
-                        .withCoordinates());
+                        .byRadius(startingPointRadius, KM));
         return list.stream()
-                .map(gv -> new Place(gv.member, gv.longitude.orElseThrow(), gv.latitude.orElseThrow()))
+                .map(gv -> gv.member)
                 .collect(Collectors.toList());
     }
-
-    List<String> getPlaceNames() {
-        return getPlaces().stream().map(Place::name).collect(Collectors.toList());
-    }
-
 }
