@@ -16,5 +16,8 @@ mvn clean package
 (cd game-service && java --enable-preview -jar target/quarkus-app/quarkus-run.jar & )
 (cd seeker-service && java --enable-preview -jar target/quarkus-app/quarkus-run.jar & )
 
+# Give services a chance to initialise before starting the game
+sleep 5
+
 # Start a game
 curl -X POST http://localhost:8091/games
