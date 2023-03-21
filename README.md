@@ -45,6 +45,19 @@ First, start Redis using `./start-redis`
 > java --enable-preview -jar target/quarkus-app/quarkus-run.jar
 ```
 
+### Seeker Service
+
+You can run only one seeker at a time.
+So pick one:
+
+- seeker-service - random pick of the next destination
+- super-seeker-service - graph based decision to always select the closest destination
+
+```shell
+> mvn clean package
+> java --enable-preview -jar target/quarkus-app/quarkus-run.jar
+```
+
 ### HTTP commands
 
 1. Start a game: `http POST :8091/games`

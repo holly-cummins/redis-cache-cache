@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 public class GameEvent {
     public final Kind kind;
@@ -19,7 +20,7 @@ public class GameEvent {
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
     public final Optional<Boolean> seekerWon;
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
-    public final OptionalInt duration;
+    public final OptionalLong duration;
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
     public final OptionalDouble distance;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,7 +36,7 @@ public class GameEvent {
         this.seekerWon = Optional.empty();
         this.destination = null;
         this.distance = OptionalDouble.empty();
-        this.duration = OptionalInt.empty();
+        this.duration = OptionalLong.empty();
     }
 
     public GameEvent(Kind kind, String gameId, String hiderName, String hidingPlace) {
@@ -47,7 +48,7 @@ public class GameEvent {
         this.seekerWon = Optional.empty();
         this.destination = null;
         this.distance = OptionalDouble.empty();
-        this.duration = OptionalInt.empty();
+        this.duration = OptionalLong.empty();
     }
 
     public GameEvent(Kind kind, String gameId, String seeker) {
@@ -59,7 +60,7 @@ public class GameEvent {
         this.seekerWon = Optional.empty();
         this.destination = null;
         this.distance = OptionalDouble.empty();
-        this.duration = OptionalInt.empty();
+        this.duration = OptionalLong.empty();
     }
 
     public GameEvent(Kind kind, String gameId, boolean seekerWon) {
@@ -71,7 +72,7 @@ public class GameEvent {
         this.seekerWon = Optional.of(seekerWon);
         this.destination = null;
         this.distance = OptionalDouble.empty();
-        this.duration = OptionalInt.empty();
+        this.duration = OptionalLong.empty();
     }
 
     public GameEvent(Kind kind, String gameId, String seeker, String hider, String place) {
@@ -83,10 +84,10 @@ public class GameEvent {
         this.seekerWon = Optional.empty();
         this.destination = null;
         this.distance = OptionalDouble.empty();
-        this.duration = OptionalInt.empty();
+        this.duration = OptionalLong.empty();
     }
 
-    public GameEvent(Kind kind, String gameId, String seeker, String position, String destination, double distance, int duration) {
+    public GameEvent(Kind kind, String gameId, String seeker, String position, String destination, double distance, long duration) {
         this.kind = kind;
         this.gameId = gameId;
         this.seeker = seeker;
@@ -94,7 +95,7 @@ public class GameEvent {
         this.destination = destination;
         this.seekerWon = Optional.empty();
         this.distance = OptionalDouble.of(distance);
-        this.duration = OptionalInt.of(duration);
+        this.duration = OptionalLong.of(duration);
         this.hider = null;
     }
 

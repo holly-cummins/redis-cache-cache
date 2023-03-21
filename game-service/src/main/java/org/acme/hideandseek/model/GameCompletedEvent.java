@@ -7,6 +7,5 @@ public class GameCompletedEvent {
     public String seeker;
     public List<String> hiders;
     public int nonDiscoveredPlayers;
-
     public long duration;
 }
