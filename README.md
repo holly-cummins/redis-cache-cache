@@ -1,12 +1,24 @@
 # Redis Cache Cache
 
-## Running instructions
+# Running instructions
 
-### Prerequisites
+## Prerequisites
 
 - Apache Maven
 - Java 19
 - Docker
+
+# Quickstart
+
+This is useful for development, to quickly bootstrap a working environment.
+
+Launch a redis container and all the services using `./start-everything`. 
+The application will be available on http://localhost:8080.
+
+
+# Slow Start
+
+This is useful for demos, to build up a story about how the application works.
 
 First, start Redis using `./start-redis`
 
