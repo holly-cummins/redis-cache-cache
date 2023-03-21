@@ -16,7 +16,6 @@
     "start": "web-dev-server"
   },
   "dependencies": {
-    "esbuild": "^0.17.12",
     "lit": "^2.0.2"
   },
   "devDependencies": {
@@ -33,6 +32,7 @@
     "@web/test-runner": "^0.14.0",
     "babel-plugin-template-html-minifier": "^4.1.0",
     "deepmerge": "^4.2.2",
+    "esbuild": "^0.17.12",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.3.0",
     "husky": "^4.3.8",
@@ -41,7 +41,8 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.60.0",
     "rollup-plugin-esbuild": "^5.0.0",
-    "rollup-plugin-workbox": "^6.2.0"
+    "rollup-plugin-workbox": "^6.2.0",
+    "sinon": "^15.0.2"
   },
   "eslintConfig": {
     "extends": [

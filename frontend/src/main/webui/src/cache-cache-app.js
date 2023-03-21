@@ -1,4 +1,5 @@
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
+import './components/leader-board.js';
 
 const logo = new URL('../assets/super-cucumber.png', import.meta.url).href;
 
@@ -20,6 +21,11 @@ class CacheCacheApp extends LitElement {
 
     main {
       flex-grow: 1;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: row;
     }
 
     .logo {
@@ -55,7 +61,10 @@ class CacheCacheApp extends LitElement {
     return html`
       <main>
         <h1>Salut! C'est cache-cache!</h1>
-        <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
+        <div class="dashboard">
+          <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
+          <leader-board></leader-board>
+        </div>
       </main>
 
       <p class="app-footer"></p>
