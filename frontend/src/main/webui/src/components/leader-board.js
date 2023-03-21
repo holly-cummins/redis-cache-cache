@@ -50,11 +50,34 @@ class Leaderboard extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.fetchData();
+    this.openConnection();
   }
 
   async fetchData() {
     const response = await fetch('http://localhost:8093/leaderboard/');
     this.data = await response?.json();
+  }
+
+  onServerUpdate = event => {
+    // Leaving the log in so we can see how often events are coming in
+    console.log('Updating data:', event);
+    this.data = JSON.parse(event?.data);
+
+    // We should perhaps handle closing in a graceful way
+  };
+
+  async openConnection() {
+    // Server side events
+    const eventSource = new EventSource(
+      'http://localhost:8093/leaderboard/events'
+    );
+    eventSource.onmessage = this.onServerUpdate;
+    eventSource.onopen = function () {
+      console.log('Connected to leaderboard.');
+    };
+    eventSource.onerror = function (err) {
+      console.warn('Error:', err);
+    };
   }
 }
 
