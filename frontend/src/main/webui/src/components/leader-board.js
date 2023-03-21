@@ -27,7 +27,7 @@ class Leaderboard extends LitElement {
     }
     return html`
       <div class="leaderboard">
-        <h2>The scores so far</h2>
+        <h2>Les scores<br />(jusqu'à présent)</h2>
         <table>
           ${this.data.map(
             entry =>
