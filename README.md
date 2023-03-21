@@ -10,6 +10,18 @@
 
 First, start Redis using `./start-redis`
 
+### UI
+
+```shell
+> cd frontend
+> mvn clean package
+> java --enable-preview -jar target/quarkus-app/quarkus-run.jar
+```
+
+Alternatively, for live reload during UI development, use `quarkus dev`
+
+The UI is available on http://localhost:8080/.
+
 ### Player service
 
 ```shell
