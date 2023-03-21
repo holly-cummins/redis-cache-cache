@@ -1,5 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import './components/leader-board.js';
+import './components/start-game-button.js';
 
 const logo = new URL('../assets/super-cucumber.png', import.meta.url).href;
 
@@ -61,6 +62,7 @@ class CacheCacheApp extends LitElement {
     return html`
       <main>
         <h1>Salut! C'est cache-cache!</h1>
+        <start-game-button></start-game-button>
         <div class="dashboard">
           <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
           <leader-board></leader-board>
