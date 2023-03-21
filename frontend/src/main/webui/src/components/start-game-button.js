@@ -14,7 +14,7 @@ class StartGameButton extends LitElement {
     return html` <button @click="${this.fetchData}">Démarrer un jeu</button> `;
   }
 
-  static fetchData = async () => {
+  fetchData = async () => {
     await fetch('http://localhost:8091/games', {
       method: 'POST',
     });
