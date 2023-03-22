@@ -48,27 +48,35 @@ public class Seeker implements Runnable {
                 var event = kv.value;
                 switch (event.kind) {
                     case GAME_STARTED -> {
-                        var gse = event.as(Event.GameStartedEvent.class);
-                        LOGGER.infof("Received game started event (%s). The seeker is %s", gse.gameId, gse.seeker.name());
-                        var copy = new ArrayList<>(repository.getPlaceNames());
-                        Collections.shuffle(copy);
-                        this.placesToVisit = copy.iterator();
-                        this.position = gse.startPosition;
-                        this.player = gse.seeker;
-                        this.game = gse.gameId;
-                        goToPlace(placesToVisit.next());
+                        var ev = event.as(Event.GameStartedEvent.class);
+                        if (this.game == null) {
+                            LOGGER.infof("Received game started event (%s). The seeker is %s", ev.gameId, ev.seeker.name());
+                            var copy = new ArrayList<>(repository.getPlaceNames());
+                            Collections.shuffle(copy);
+                            this.placesToVisit = copy.iterator();
+                            this.position = ev.startPosition;
+                            this.player = ev.seeker;
+                            this.game = ev.gameId;
+                            goToPlace(placesToVisit.next());
+                        }
                     }
                     case GAME_ENDED -> {
-                        LOGGER.infof("The game is complete");
-                        this.game = null;
-                        this.player = null;
-                        this.placesToVisit = null;
+                        var ev = event.as(Event.GameEndedEvent.class);
+                        if (ev.gameId.equals(this.game)) {
+                            LOGGER.infof("The game is complete");
+                            this.game = null;
+                            this.player = null;
+                            this.placesToVisit = null;
+                        }
                     }
                     case SEEKER_ARRIVED -> {
-                        this.position = event.as(Event.SeekerArrivedAtEvent.class).place;
-                        redis.list(Event.SeekerAtPositionEvent.class).lpush(game, new Event.SeekerAtPositionEvent(game, this.position));
-                        if (placesToVisit.hasNext()) {
-                            goToPlace(placesToVisit.next());
+                        var ev = event.as(Event.SeekerArrivedAtEvent.class);
+                        if (ev.gameId.equals(this.game)) {
+                            this.position = ev.place;
+                            redis.list(Event.SeekerAtPositionEvent.class).lpush(game, new Event.SeekerAtPositionEvent(game, this.position));
+                            if (placesToVisit.hasNext()) {
+                                goToPlace(placesToVisit.next());
+                            }
                         }
                     }
                 }

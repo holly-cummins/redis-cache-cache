@@ -2,12 +2,13 @@ package org.acme.hideandseek.places;
 
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.search.Document;
+import io.quarkus.runtime.Startup;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Startup
 public class PlaceRepository {
 
     private final RedisDataSource redis;
