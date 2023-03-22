@@ -60,7 +60,7 @@ class Leaderboard extends LitElement {
 
   onServerUpdate = event => {
     // Leaving the log in so we can see how often events are coming in
-    console.log('Updating data:', event);
+    console.debug('Updating data:', event);
     this.data = JSON.parse(event?.data);
 
     // We should perhaps handle closing in a graceful way

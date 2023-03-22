@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import './components/leader-board.js';
 import './components/start-game-button.js';
+import './components/event-ticker.js';
 
 const logo = new URL('../assets/super-cucumber.png', import.meta.url).href;
 
@@ -25,6 +26,11 @@ class CacheCacheApp extends LitElement {
     }
 
     .dashboard {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .row {
       display: flex;
       flex-direction: row;
     }
@@ -64,8 +70,11 @@ class CacheCacheApp extends LitElement {
         <h1>Salut! C'est cache-cache!</h1>
         <start-game-button></start-game-button>
         <div class="dashboard">
-          <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
-          <leader-board></leader-board>
+          <div class="row">
+            <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
+            <leader-board></leader-board>
+          </div>
+          <event-ticker></event-ticker>
         </div>
       </main>
 
