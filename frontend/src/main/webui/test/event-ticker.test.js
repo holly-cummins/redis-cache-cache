@@ -41,6 +41,15 @@ describe('Event ticker', () => {
       });
     };
 
+    const emitAndWait = async data => {
+      emit(data);
+      // wait until data has been set
+      await waitUntil(
+        () => element.events,
+        'Element did not populate its data'
+      );
+    };
+
     const firstEvent = {
       kind: 'HIDER',
       gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
@@ -50,16 +59,10 @@ describe('Event ticker', () => {
 
     beforeEach(async () => {
       element = await fixture(html` <event-ticker></event-ticker>`);
-      emit(firstEvent);
-
-      // wait until data has been set
-      await waitUntil(
-        () => element.events,
-        'Element did not populate its data'
-      );
     });
 
-    it('renders a list of events', () => {
+    it('renders a list of events', async () => {
+      await emitAndWait(firstEvent);
       const ul = element.shadowRoot.querySelector('ul');
       expect(ul).to.exist;
       const li = element.shadowRoot.querySelector('li');
@@ -69,17 +72,14 @@ describe('Event ticker', () => {
     });
 
     it('prepends subsequent events', async () => {
-      emit({
+      await emitAndWait(firstEvent);
+      await emitAndWait({
         kind: 'HIDER',
         gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
         hider: 'second hider',
         place: 'Eiffel Tower',
       });
-      // wait until data has been set
-      await waitUntil(
-        () => element.events,
-        'Element did not populate its data'
-      );
+
       const ul = element.shadowRoot.querySelector('ul');
       expect(ul).to.exist;
       // The selector will select the first matching item, which in this case is what we want, because we want descending order
@@ -87,6 +87,38 @@ describe('Event ticker', () => {
       expect(li.textContent).to.contain(
         'second hider se cache au Eiffel Tower'
       );
+    });
+
+    it('renders game start events', async () => {
+      await emitAndWait({
+        kind: 'NEW_GAME',
+        gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
+        seeker: 'super-cucumber',
+      });
+      const li = element.shadowRoot.querySelector('li');
+      expect(li.textContent).to.contain('jeu commence');
+    });
+
+    it('renders game end events when the seeker lost', async () => {
+      await emitAndWait({
+        kind: 'GAME_OVER',
+        gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
+        seekerWon: false,
+      });
+
+      const li = element.shadowRoot.querySelector('li');
+      expect(li.textContent).to.contain('perdu');
+    });
+
+    it('renders game end events when the seeker lost', async () => {
+      await emitAndWait({
+        kind: 'GAME_OVER',
+        gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
+        seekerWon: true,
+      });
+
+      const li = element.shadowRoot.querySelector('li');
+      expect(li.textContent).to.contain('gagné');
     });
 
     it('passes the a11y audit', async () => {

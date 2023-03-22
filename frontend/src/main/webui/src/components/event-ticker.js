@@ -38,7 +38,13 @@ class EventTicker extends LitElement {
   static format(event) {
     switch (event.kind) {
       case 'HIDER':
-        return html`${event.hider} se cache au ${event.place} `;
+        return html`Oh, ${event.hider} se cache au ${event.place}.`;
+      case 'NEW_GAME':
+        return html`Le jeu commence.`;
+      case 'GAME_OVER':
+        return event.seekerWon
+          ? html`L'attrapeur a gagné.`
+          : html`L'attrapeur a perdu.`;
       default:
         return '';
     }
