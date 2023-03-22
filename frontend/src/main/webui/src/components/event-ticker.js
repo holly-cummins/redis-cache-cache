@@ -41,10 +41,18 @@ class EventTicker extends LitElement {
         return html`Oh, ${event.hider} se cache au ${event.place}.`;
       case 'NEW_GAME':
         return html`Le jeu commence.`;
+      case 'PLAYER_DISCOVERED': {
+        return html`Ah, ${event.seeker} a trouvé ${event.hider} a
+        ${event.place}.`;
+      }
+      case 'SEEKER_MOVE': {
+        return html`Ah, ${event.seeker} est allé a ${event.place}.`;
+      }
       case 'GAME_OVER': {
         const verb = event.seekerWon ? `a gagné` : `a perdu`;
-        return html`<b>Jeu terminé.</b> L'attrapeur ${verb}`;
+        return html`<b>Jeu terminé.</b> L'attrapeur ${verb}!`;
       }
+
       default:
         return '';
     }

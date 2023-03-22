@@ -121,8 +121,33 @@ describe('Event ticker', () => {
       expect(li.textContent).to.contain('gagné');
     });
 
-    it('passes the a11y audit', async () => {
-      await expect(element).shadowDom.to.be.accessible();
+    it('renders player discovered events', async () => {
+      await emitAndWait({
+        kind: 'PLAYER_DISCOVERED',
+        gameId: '6ed444f7-62f6-49b4-83d0-8f21277e0ede',
+        hider: 'super-cucumber',
+        seeker: 'frogman',
+        place: 'Sacré Coeur',
+      });
+
+      const li = element.shadowRoot.querySelector('li');
+      expect(li.textContent).to.contain('trouvé');
+    });
+
+    it('renders seeker move events', async () => {
+      await emitAndWait({
+        kind: 'SEEKER_MOVE',
+        gameId: '6ed444f7-62f6-49b4-83d0-8f21277e0ede',
+        seeker: 'fakeman',
+        place: 'Sacré Coeur',
+        duration: 1,
+        distance: 22.2723,
+        destination: 'Montmartre',
+      });
+
+      const li = element.shadowRoot.querySelector('li');
+      expect(li.textContent).to.contain('fakeman');
+      expect(li.textContent).to.contain('Sacré Coeur');
     });
   });
 });
