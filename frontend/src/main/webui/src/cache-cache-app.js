@@ -67,7 +67,7 @@ class CacheCacheApp extends LitElement {
   render() {
     return html`
       <main>
-        <h1>Salut! C'est cache-cache!</h1>
+        <h1>C'est cache-cache!</h1>
         <start-game-button></start-game-button>
         <div class="dashboard">
           <div class="row">
