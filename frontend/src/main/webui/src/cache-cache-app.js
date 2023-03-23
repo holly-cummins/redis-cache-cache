@@ -2,6 +2,7 @@ import { css, html, LitElement } from 'lit';
 import './components/leader-board.js';
 import './components/start-game-button.js';
 import './components/event-ticker.js';
+import './components/map-view.js';
 
 const logo = new URL('../assets/super-cucumber.png', import.meta.url).href;
 
@@ -71,10 +72,11 @@ class CacheCacheApp extends LitElement {
         <start-game-button></start-game-button>
         <div class="dashboard">
           <div class="row">
-            <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
+            <map-view></map-view>
             <leader-board></leader-board>
           </div>
           <event-ticker></event-ticker>
+          <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
         </div>
       </main>
 
