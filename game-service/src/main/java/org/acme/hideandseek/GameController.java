@@ -5,12 +5,15 @@ import io.quarkus.redis.datasource.RedisDataSource;
 import io.smallrye.mutiny.Multi;
 import org.acme.hideandseek.actors.Game;
 import org.acme.hideandseek.model.GameEvent;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
+import java.time.Duration;
 
 @RestController
 public class GameController {
@@ -20,19 +23,22 @@ public class GameController {
     private final RedisDataSource redis;
     private final Multi<GameEvent> events;
 
+    @ConfigProperty(name = "hide-and-seek.game-duration", defaultValue = "10s")
+    Duration maxGameDuration;
+
     public GameController(PlayerRepository players, PlaceRepository places,
                           ReactiveRedisDataSource reactiveRedis,
                           RedisDataSource redis) {
         this.players = players;
         this.places = places;
         this.redis = redis;
-        this.events = reactiveRedis.pubsub(GameEvent.class).subscribe("game-events");
+        this.events = reactiveRedis.pubsub(GameEvent.class).subscribe("hide-and-seek/events");
     }
 
     @PostMapping("/games")
-    public void start() {
-        Game game = new Game(players.getAllPlayers(), places.getPlaceNames(), redis);
-        game.start();
+    public String start() {
+        Game game = new Game(players.getAllPlayers(), places.getPlaceNames(), redis, maxGameDuration);
+        return game.start();
     }
 
     @GetMapping("/games/events")

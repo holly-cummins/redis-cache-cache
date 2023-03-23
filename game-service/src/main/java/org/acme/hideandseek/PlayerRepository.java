@@ -18,7 +18,7 @@ public class PlayerRepository {
     }
 
     public Collection<Player> getAllPlayers() {
-        return players.hgetall("players").values();
+        return players.hgetall("hide-and-seek:players").values();
     }
 
 }

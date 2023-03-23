@@ -34,14 +34,12 @@ public class Event {
 
     public static class GameStartedEvent extends Event {
 
-        public final String startPosition;
         public final Player seeker;
 
         @JsonCreator
-        public GameStartedEvent(String gameId, Player seeker, String startPosition) {
+        public GameStartedEvent(String gameId, Player seeker) {
             super(Kind.GAME_STARTED, gameId);
             this.seeker = seeker;
-            this.startPosition = startPosition;
         }
     }
 

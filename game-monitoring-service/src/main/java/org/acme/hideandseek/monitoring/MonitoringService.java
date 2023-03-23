@@ -3,20 +3,20 @@ package org.acme.hideandseek.monitoring;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.timeseries.AddArgs;
 import io.quarkus.redis.datasource.timeseries.Aggregation;
-import io.quarkus.redis.datasource.timeseries.CreateArgs;
 import io.quarkus.redis.datasource.timeseries.RangeArgs;
 import io.quarkus.redis.datasource.timeseries.TimeSeriesRange;
+import io.quarkus.runtime.Startup;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
-import io.smallrye.mutiny.tuples.Tuple2;
-import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
-@Service
+@Startup
 public class MonitoringService {
 
-    public static final String KEY = "game:monitoring";
+    public static final String TOPIC_EVENTS = "hide-and-seek/events";
+
+    public static final String KEY = "hide-and-seek:game:monitoring";
     private final RedisDataSource redis;
     private final BroadcastProcessor<MonitoringData> stream;
 
@@ -28,15 +28,18 @@ public class MonitoringService {
             this.redis.timeseries().tsCreate(KEY);
         }
         this.stream = BroadcastProcessor.create();
-        this.redis.pubsub(GameCompletedEvent.class).subscribe("game:completed", this::handle);
+        this.redis.pubsub(GameEvent.class).subscribe(TOPIC_EVENTS, this::handle);
     }
 
-    private void handle(GameCompletedEvent event) {
-        Thread.ofVirtual().start(() -> {
-            redis.timeseries().tsAdd(KEY, System.currentTimeMillis(), event.duration,
-                    new AddArgs().label("seeker-won", event.nonDiscoveredPlayers == 0));
-            stream.onNext(new MonitoringData(getAverageForTheLastTwoMinutes(), getGameTimeForTheLastTwoMinutes()));
-        });
+    private void handle(GameEvent event) {
+        if (event.kind == GameEvent.Kind.GAME_OVER) {
+            Thread.ofVirtual().start(() -> {
+                redis.timeseries().tsAdd(KEY, System.currentTimeMillis(), event.duration.orElse(0),
+                        new AddArgs().label("seeker-won", event.nonDiscoveredPlayers.orElse(0) == 0));
+                stream.onNext(new MonitoringData(getAverageForTheLastTwoMinutes(), getGameTimeForTheLastTwoMinutes()));
+            });
+        }
+        // Otherwise ignore the event
     }
 
 

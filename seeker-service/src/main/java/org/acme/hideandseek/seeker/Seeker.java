@@ -4,12 +4,11 @@ import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.geo.GeoUnit;
 import io.quarkus.redis.datasource.list.KeyValue;
 import io.quarkus.redis.datasource.list.ListCommands;
-import io.quarkus.redis.datasource.pubsub.PubSubCommands;
 import io.quarkus.runtime.Startup;
 import org.acme.hideandseek.model.Event;
 import org.acme.hideandseek.model.Player;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -18,8 +17,9 @@ import java.util.Iterator;
 
 @Startup
 public class Seeker implements Runnable {
+
+    private final static String SEEKER_KEY = "hide-and-seek:seeker";
     private final static Logger LOGGER = Logger.getLogger("Seeker");
-    private static final String KEY = "seeker";
 
     private final ListCommands<String, Event> queues;
     private Iterator<String> placesToVisit;
@@ -31,19 +31,22 @@ public class Seeker implements Runnable {
     private volatile String game;
     private String position;
 
-    public Seeker(PlaceRepository repository, RedisDataSource redis) {
+
+    public Seeker(PlaceRepository repository, RedisDataSource redis,
+                  @ConfigProperty(name = "hide-and-seek.seeker-initial-position", defaultValue = "Devoxx") String initialPosition) {
         this.redis = redis;
         this.repository = repository;
 
         this.queues = redis.list(Event.class);
 
+        this.position = initialPosition;
         LOGGER.infof("Starting seeker");
         Thread.ofVirtual().start(this);
     }
 
     public void run() {
         while (true) {
-            KeyValue<String, Event> kv = queues.blpop(Duration.ofSeconds(1), KEY);
+            KeyValue<String, Event> kv = queues.blpop(Duration.ofSeconds(1), SEEKER_KEY);
             if (kv != null) {
                 var event = kv.value;
                 switch (event.kind) {
@@ -54,7 +57,6 @@ public class Seeker implements Runnable {
                             var copy = new ArrayList<>(repository.getPlaceNames());
                             Collections.shuffle(copy);
                             this.placesToVisit = copy.iterator();
-                            this.position = ev.startPosition;
                             this.player = ev.seeker;
                             this.game = ev.gameId;
                             goToPlace(placesToVisit.next());
@@ -73,7 +75,7 @@ public class Seeker implements Runnable {
                         var ev = event.as(Event.SeekerArrivedAtEvent.class);
                         if (ev.gameId.equals(this.game)) {
                             this.position = ev.place;
-                            redis.list(Event.SeekerAtPositionEvent.class).lpush(game, new Event.SeekerAtPositionEvent(game, this.position));
+                            redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game:"+ game, new Event.SeekerAtPositionEvent(game, this.position));
                             if (placesToVisit.hasNext()) {
                                 goToPlace(placesToVisit.next());
                             }
@@ -85,15 +87,15 @@ public class Seeker implements Runnable {
     }
 
     private void goToPlace(String destination) {
-        var distance = redis.geo(String.class).geodist("places_geo", position, destination, GeoUnit.M);
+        var distance = redis.geo(String.class).geodist("hide-and-seek:geo", position, destination, GeoUnit.M);
         var duration = (int) (distance.orElse(0.0) / player.speed());
         LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, it will take %sms", player.name(), position, destination, distance.orElse(0.0), duration);
-        redis.list(Event.SeekerMoveEvent.class).lpush(game, new Event.SeekerMoveEvent(game, this.position, destination, duration, distance.orElse(0.0)));
+        redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game:"+ game, new Event.SeekerMoveEvent(game, this.position, destination, duration, distance.orElse(0.0)));
         Thread.ofVirtual().start(() -> {
             try {
                 Thread.sleep(duration);
                 if (game != null) {
-                    redis.list(Event.SeekerArrivedAtEvent.class).lpush(KEY, new Event.SeekerArrivedAtEvent(game, destination));
+                    redis.list(Event.SeekerArrivedAtEvent.class).lpush(SEEKER_KEY, new Event.SeekerArrivedAtEvent(game, destination));
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

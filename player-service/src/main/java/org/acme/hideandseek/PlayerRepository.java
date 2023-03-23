@@ -2,14 +2,14 @@ package org.acme.hideandseek;
 
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.hash.HashCommands;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Component
+@Repository
 public class PlayerRepository {
 
-    private static final String PLAYER_KEY = "players";
+    private static final String PLAYER_KEY = "hide-and-seek:players";
     private final RedisDataSource redis;
     private final HashCommands<String, String, Player> hash;
     private final IdGenerator generator;

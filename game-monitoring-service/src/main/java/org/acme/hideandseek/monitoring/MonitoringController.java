@@ -24,6 +24,11 @@ public class MonitoringController {
         return monitoring.stream();
     }
 
+    @GetMapping("/monitoring/last")
+    public double getLast() {
+        return monitoring.getLast();
+    }
+
     @GetMapping("/monitoring/average")
     public double getAverage() {
         return monitoring.getAverageForTheLastTwoMinutes();
