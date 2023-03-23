@@ -3,7 +3,6 @@ package org.acme.hideandseek.places;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.search.Document;
 import io.quarkus.runtime.Startup;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,21 +18,21 @@ public class PlaceRepository {
     }
 
     private void initGeoSpatialData() {
-        for (String key : redis.key().keys("places:*")) {
+        for (String key : redis.key().keys("hide-and-seek:places:*")) {
             Place place = redis.json().jsonGet(key, Place.class);
             String[] pos = place.coordinates().split(",");
-            redis.geo(String.class).geoadd("places_geo", Double.parseDouble(pos[0]), Double.parseDouble(pos[1]), place.name());
+            redis.geo(String.class).geoadd("hide-and-seek:geo", Double.parseDouble(pos[0]), Double.parseDouble(pos[1]), place.name());
         }
     }
 
     List<Place> getPlaces() {
-        return redis.key().keys("places:*").stream()
+        return redis.key().keys("hide-and-seek:places:*").stream()
                 .map(key -> redis.json().jsonGet(key, Place.class))
                 .collect(Collectors.toList());
     }
 
     List<Place> search(String query) {
-        return redis.search().ftSearch("places", query)
+        return redis.search().ftSearch("hide-and-seek:places-index", query)
                 .documents()
                 .stream()
                 .map(this::createPlaceFromDocument)

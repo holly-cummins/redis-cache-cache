@@ -2,19 +2,27 @@ package org.acme.hideandseek.model;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.acme.hideandseek.actors.Hider;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
+import static org.acme.hideandseek.model.GameEvent.Kind.PLAYER_DISCOVERED;
+import static org.acme.hideandseek.model.GameEvent.Kind.SEEKER_MOVE;
+
 public class GameEvent {
     public final Kind kind;
     public final String gameId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public final String hider;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public final String seeker;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public final String hider;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public final String place;
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -26,81 +34,80 @@ public class GameEvent {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public final String destination;
 
-    @SuppressWarnings("unused")
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    public final OptionalInt nonDiscoveredPlayers;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public final Map<String, String> hiders;
+
     public GameEvent() {
         this.kind = null;
         this.gameId = null;
-        this.hider = null;
         this.place = null;
         this.seeker = null;
-        this.seekerWon = Optional.empty();
+        this.hider = null;
         this.destination = null;
         this.distance = OptionalDouble.empty();
+        this.hiders = null;
+        this.nonDiscoveredPlayers = OptionalInt.empty();
         this.duration = OptionalLong.empty();
-    }
-
-    public GameEvent(Kind kind, String gameId, String hiderName, String hidingPlace) {
-        this.kind = kind;
-        this.gameId = gameId;
-        this.hider = hiderName;
-        this.place = hidingPlace;
-        this.seeker = null;
         this.seekerWon = Optional.empty();
-        this.destination = null;
-        this.distance = OptionalDouble.empty();
-        this.duration = OptionalLong.empty();
     }
 
-    public GameEvent(Kind kind, String gameId, String seeker) {
+    private GameEvent(Kind kind, String gameId, String seeker, String hider, Map<String, String> hiders, String place, String destination, double distance, long duration, int nonDiscoveredPlayers) {
         this.kind = kind;
         this.gameId = gameId;
         this.seeker = seeker;
-        this.place = null;
-        this.hider = null;
-        this.seekerWon = Optional.empty();
-        this.destination = null;
-        this.distance = OptionalDouble.empty();
-        this.duration = OptionalLong.empty();
-    }
-
-    public GameEvent(Kind kind, String gameId, boolean seekerWon) {
-        this.kind = kind;
-        this.gameId = gameId;
-        this.seeker = null;
-        this.place = null;
-        this.hider = null;
-        this.seekerWon = Optional.of(seekerWon);
-        this.destination = null;
-        this.distance = OptionalDouble.empty();
-        this.duration = OptionalLong.empty();
-    }
-
-    public GameEvent(Kind kind, String gameId, String seeker, String hider, String place) {
-        this.kind = kind;
-        this.gameId = gameId;
-        this.seeker = seeker;
-        this.place = place;
         this.hider = hider;
-        this.seekerWon = Optional.empty();
-        this.destination = null;
-        this.distance = OptionalDouble.empty();
-        this.duration = OptionalLong.empty();
+        this.hiders = hiders;
+        this.place = place;
+        this.destination = destination;
+        if (distance > 0) {
+            this.distance = OptionalDouble.of(distance);
+        } else {
+            this.distance = OptionalDouble.empty();
+        }
+        if (duration > 0) {
+            this.duration = OptionalLong.of(duration);
+        } else {
+            this.duration = OptionalLong.empty();
+        }
+        if (nonDiscoveredPlayers != -1) {
+            this.nonDiscoveredPlayers = OptionalInt.of(nonDiscoveredPlayers);
+            this.seekerWon = Optional.of(nonDiscoveredPlayers == 0);
+        } else {
+            this.nonDiscoveredPlayers = OptionalInt.empty();
+            this.seekerWon = Optional.empty();
+        }
     }
 
-    public GameEvent(Kind kind, String gameId, String seeker, String position, String destination, double distance, long duration) {
-        this.kind = kind;
-        this.gameId = gameId;
-        this.seeker = seeker;
-        this.place = position;
-        this.destination = destination;
-        this.seekerWon = Optional.empty();
-        this.distance = OptionalDouble.of(distance);
-        this.duration = OptionalLong.of(duration);
-        this.hider = null;
+    public static GameEvent newGame(String gameId, Player seeker, List<Hider> hiders) {
+        Map<String, String> h = new HashMap<>();
+        hiders.forEach(hider -> h.put(hider.player.name(), hider.getPosition()));
+        return new GameEvent(GameEvent.Kind.NEW_GAME, gameId,
+                seeker.name(), null,
+                h, null, null, 0.0, 0, -1);
+    }
+
+    public static GameEvent gameOver(String gameId, long duration, Player seeker, List<Hider> hiders) {
+        Map<String, String> h = new HashMap<>();
+        hiders.forEach(hider -> h.put(hider.player.name(), hider.getPosition()));
+        int sum = hiders.stream().mapToInt(hider -> hider.hasBeenDiscovered() ? 0 : 1).sum();
+        return new GameEvent(Kind.GAME_OVER, gameId,
+                seeker.name(), null, h, null, null, 0.0, duration, sum);
+    }
+
+    public static GameEvent hiderDiscovered(String gameId, Player seeker, Hider hider, String place) {
+        return new GameEvent(PLAYER_DISCOVERED, gameId,
+                seeker.name(), hider.player.name(), null, place, null, 0.0, 0, -1);
+    }
+
+    public static GameEvent seekerMove(String gameId, Player seeker, String place, String destination, double distance, long duration) {
+        return new GameEvent(SEEKER_MOVE, gameId,
+                seeker.name(), null, null, place, destination, distance, duration, -1);
     }
 
     public enum Kind {
-        HIDER,
         NEW_GAME,
         GAME_OVER,
         PLAYER_DISCOVERED,

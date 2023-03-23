@@ -26,7 +26,7 @@ public class PlaceRepository {
     }
 
     List<String> getPlaceNames() {
-        var list = redis.geo(String.class).geosearch("places_geo",
+        var list = redis.geo(String.class).geosearch("hide-and-seek:geo",
                 new GeoSearchArgs<String>().fromMember(startingPointName)
                         .byRadius(startingPointRadius, KM));
         return list.stream()
