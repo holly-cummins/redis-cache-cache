@@ -6,7 +6,7 @@ mvn clean package
 
 ./start-redis.sh
 
-# Launch each service. Good luck finding them all again to stop them. :)
+# Launch each service. The stop-everything.sh command can be used to find them and stop them.
 
 (cd frontend && java --enable-preview -jar target/quarkus-app/quarkus-run.jar & )
 (cd player-service && java --enable-preview -jar target/quarkus-app/quarkus-run.jar & )
