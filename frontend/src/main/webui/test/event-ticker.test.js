@@ -91,8 +91,12 @@ describe('Event ticker', () => {
 
     it('renders game start events', async () => {
       await emitAndWait({
+        gameId: '59e0557d-8c16-43cc-a63c-446b0a06bed5',
+        hiders: {
+          frogman: 'Devoxx',
+          'raving rabbit': 'Montmartre',
+        },
         kind: 'NEW_GAME',
-        gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
         seeker: 'super-cucumber',
       });
       const li = element.shadowRoot.querySelector('li');
@@ -101,8 +105,15 @@ describe('Event ticker', () => {
 
     it('renders game end events when the seeker lost', async () => {
       await emitAndWait({
+        duration: 837,
+        gameId: '59e0557d-8c16-43cc-a63c-446b0a06bed5',
+        hiders: {
+          frogman: 'Devoxx',
+          'raving rabbit': 'Montmartre',
+        },
         kind: 'GAME_OVER',
-        gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
+        nonDiscoveredPlayers: 1,
+        seeker: 'super-cucumber',
         seekerWon: false,
       });
 
@@ -110,10 +121,17 @@ describe('Event ticker', () => {
       expect(li.textContent).to.contain('perdu');
     });
 
-    it('renders game end events when the seeker lost', async () => {
+    it('renders game end events when the seeker won', async () => {
       await emitAndWait({
+        duration: 837,
+        gameId: '59e0557d-8c16-43cc-a63c-446b0a06bed5',
+        hiders: {
+          frogman: 'Devoxx',
+          'raving rabbit': 'Montmartre',
+        },
         kind: 'GAME_OVER',
-        gameId: 'b5415c47-5923-4828-8f89-483a217be2fa',
+        nonDiscoveredPlayers: 0,
+        seeker: 'super-cucumber',
         seekerWon: true,
       });
 
@@ -123,26 +141,27 @@ describe('Event ticker', () => {
 
     it('renders player discovered events', async () => {
       await emitAndWait({
+        gameId: '59e0557d-8c16-43cc-a63c-446b0a06bed5',
+        hider: 'foundman',
         kind: 'PLAYER_DISCOVERED',
-        gameId: '6ed444f7-62f6-49b4-83d0-8f21277e0ede',
-        hider: 'super-cucumber',
-        seeker: 'frogman',
-        place: 'Sacré Coeur',
+        place: 'Devoxx',
+        seeker: 'super-cucumber',
       });
 
       const li = element.shadowRoot.querySelector('li');
       expect(li.textContent).to.contain('trouvé');
+      expect(li.textContent).to.contain('foundman');
     });
 
     it('renders seeker move events', async () => {
       await emitAndWait({
+        destination: 'Sacré Coeur',
+        distance: 1029.3517,
+        duration: 34,
+        gameId: '59e0557d-8c16-43cc-a63c-446b0a06bed5',
         kind: 'SEEKER_MOVE',
-        gameId: '6ed444f7-62f6-49b4-83d0-8f21277e0ede',
+        place: 'Devoxx',
         seeker: 'fakeman',
-        place: 'Sacré Coeur',
-        duration: 1,
-        distance: 22.2723,
-        destination: 'Montmartre',
       });
 
       const li = element.shadowRoot.querySelector('li');
