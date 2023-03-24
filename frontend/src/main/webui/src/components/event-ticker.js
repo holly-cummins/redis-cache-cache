@@ -46,7 +46,7 @@ class EventTicker extends LitElement {
         ${event.place}.`;
       }
       case 'SEEKER_MOVE': {
-        return html`Ah, ${event.seeker} est allé a ${event.place}.`;
+        return html`Ah, ${event.seeker} est allé a ${event.destination}.`;
       }
       case 'GAME_OVER': {
         const verb = event.seekerWon ? `a gagné` : `a perdu`;
