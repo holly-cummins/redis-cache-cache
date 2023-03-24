@@ -10,10 +10,10 @@ class MapView extends LitElement {
   static styles = css`
     .map {
       padding: 0;
-      border: grey 1px solid;
       width: ${width}px;
       height: ${height}px;
       position: relative;
+      margin: 80px;
     }
 
     .place {
@@ -30,7 +30,7 @@ class MapView extends LitElement {
     .label {
       width: 100px; // an arbitrary width, so we can center in it
       text-align: center;
-      transform: translateX(-50%) translateY(-100%);
+      transform: translateX(-50%) translateY(-120%);
     }
   `;
 
