@@ -44,6 +44,7 @@ class Leaderboard extends LitElement {
   static get properties() {
     return {
       data: {},
+      eventSource: {},
     };
   }
 
@@ -53,31 +54,42 @@ class Leaderboard extends LitElement {
     this.openConnection();
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.closeConnection();
+  }
+
   async fetchData() {
-    const response = await fetch('http://localhost:8093/leaderboard/');
-    this.data = await response?.json();
+    try {
+      const response = await fetch('http://localhost:8093/leaderboard/');
+      this.data = await response?.json();
+    } catch (e) {
+      console.warn('Could not fetch leaderboard information.');
+    }
   }
 
   onServerUpdate = event => {
     // Leaving the log in so we can see how often events are coming in
     console.debug('Updating data:', event);
     this.data = JSON.parse(event?.data);
-
-    // We should perhaps handle closing in a graceful way
   };
 
   async openConnection() {
     // Server side events
-    const eventSource = new EventSource(
+    this.eventSource = new EventSource(
       'http://localhost:8093/leaderboard/events'
     );
-    eventSource.onmessage = this.onServerUpdate;
-    eventSource.onopen = function () {
+    this.eventSource.onmessage = this.onServerUpdate;
+    this.eventSource.onopen = function () {
       console.log('Connected to leaderboard.');
     };
-    eventSource.onerror = function (err) {
+    this.eventSource.onerror = function (err) {
       console.warn('Error:', err);
     };
+  }
+
+  async closeConnection() {
+    this.eventSource?.close();
   }
 }
 

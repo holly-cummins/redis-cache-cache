@@ -16,6 +16,7 @@ describe('Leaderboard', () => {
   describe('in the absence of data', () => {
     beforeEach(async () => {
       element = await fixture(html` <leader-board></leader-board>`);
+      return element;
     });
 
     it('renders a placeholder', () => {
@@ -71,6 +72,8 @@ describe('Leaderboard', () => {
       constructor(url) {
         sources[url] = this;
       }
+
+      close() {}
     }
 
     Object.defineProperty(window, 'EventSource', {
