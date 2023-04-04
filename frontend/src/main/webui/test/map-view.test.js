@@ -81,10 +81,7 @@ describe('Map view', () => {
 
       element = await fixture(html` <map-view></map-view>`);
       // wait until data has been set
-      await waitUntil(
-        () => element.places,
-        'Element did not populate its data'
-      );
+      await waitUntil(() => element.places, 'Map did not populate place data');
     });
 
     afterEach(() => {
@@ -127,7 +124,7 @@ describe('Map view', () => {
       // wait until data has been set
       await waitUntil(
         () => element.places,
-        'Element did not populate its data'
+        'Map did not populate place data for two places'
       );
     });
 
@@ -169,10 +166,7 @@ describe('Map view', () => {
 
       element = await fixture(html` <map-view></map-view>`);
       // wait until data has been set
-      await waitUntil(
-        () => element.places,
-        'Element did not populate its data'
-      );
+      await waitUntil(() => element.places, 'Map did not populate its data');
     });
 
     afterEach(() => {
@@ -213,10 +207,7 @@ describe('Map view', () => {
 
       element = await fixture(html` <map-view></map-view>`);
       // wait until data has been set
-      await waitUntil(
-        () => element.places,
-        'Element did not populate its data'
-      );
+      await waitUntil(() => element.places, 'Map did not populate its data');
     });
 
     afterEach(() => {
@@ -257,10 +248,7 @@ describe('Map view', () => {
 
       element = await fixture(html` <map-view></map-view>`);
       // wait until data has been set
-      await waitUntil(
-        () => element.places,
-        'Element did not populate its data'
-      );
+      await waitUntil(() => element.places, 'Map did not populate its data');
     });
 
     afterEach(() => {
@@ -338,10 +326,7 @@ describe('Map view', () => {
 
       element = await fixture(html` <map-view></map-view>`);
       // wait until data has been set
-      await waitUntil(
-        () => element.places,
-        'Element did not populate its data'
-      );
+      await waitUntil(() => element.places, 'Map did not populate its data');
     });
 
     afterEach(() => {
@@ -382,6 +367,86 @@ describe('Map view', () => {
 
     it('passes the a11y audit', async () => {
       await expect(element).shadowDom.to.be.accessible();
+    });
+  });
+
+  describe('when events are streamed', () => {
+    const sources = {};
+
+    // There seems to be some es6/cjs issue with eventsourcemock, so home roll a mock
+    class MockEventSource {
+      constructor(url) {
+        sources[url] = this;
+      }
+
+      close() {}
+    }
+
+    Object.defineProperty(window, 'EventSource', {
+      writable: true,
+      value: MockEventSource,
+    });
+
+    const emit = data => {
+      sources['http://localhost:8091/games/events']?.onmessage({
+        data: JSON.stringify(data),
+      });
+    };
+
+    const emitAndWait = async data => {
+      emit(data);
+      // wait until data has been set
+
+      return waitUntil(
+        () => element.positions,
+        'Map did not populate event data on SSE emit'
+      );
+    };
+
+    beforeEach(async () => {
+      const stubbedFetch = sinon.stub(window, 'fetch');
+      const realPlace = places[0];
+      const realLatLong = realPlace.coordinates.split(',');
+      const syntheticPlace = {
+        key: 'synthetic',
+        name: 'Synthetic',
+        picture: '',
+        description: 'Stuff',
+        // Shift the longitude, leave the latitude
+        // Decreasing the latitude puts it closer to the bottom
+        // Increasing the longitude puts it closer to the right
+        coordinates: `${+realLatLong[0] + 10},${+realLatLong[1] - 10}`,
+      };
+      stubbedFetch.returns(mockApiResponse([syntheticPlace, realPlace]));
+
+      element = await fixture(html` <map-view></map-view>`);
+      // wait until data has been set
+      await waitUntil(
+        () => element.places,
+        'Map did not populate place data (needed for events)'
+      );
+    });
+
+    it('renders seeker move events', async () => {
+      let place = element.shadowRoot.querySelector('.place');
+      expect(place.textContent).to.contain('Synthetic');
+      expect(place.className).to.not.contain('active');
+
+      await emitAndWait({
+        destination: 'Sacré Coeur',
+        distance: 1029.3517,
+        duration: 34,
+        gameId: '59e0557d-8c16-43cc-a63c-446b0a06bed5',
+        kind: 'SEEKER_MOVE',
+        place: 'Synthetic',
+        seeker: 'fakeman',
+      });
+
+      place = element.shadowRoot.querySelector('.place');
+      expect(place.textContent).to.contain('Synthetic');
+      expect(place.className).to.contain('seeker');
+
+      // TODO need to check we wiped the old one
     });
   });
 });

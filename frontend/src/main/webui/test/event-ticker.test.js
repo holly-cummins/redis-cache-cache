@@ -7,6 +7,7 @@ describe('Event ticker', () => {
   describe('in the absence of data', () => {
     beforeEach(async () => {
       element = await fixture(html` <event-ticker></event-ticker>`);
+      return element;
     });
 
     it('renders a placeholder', () => {
