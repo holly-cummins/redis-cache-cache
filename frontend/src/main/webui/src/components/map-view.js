@@ -3,7 +3,7 @@ import { css, html, LitElement } from 'lit';
 // This is only needed for single-point or row or column cases, and the exact value doesn't matter then
 const defaultScaleFactor = 10000;
 
-const width = 1500;
+const width = 1400;
 const height = width * 0.75;
 
 class MapView extends LitElement {

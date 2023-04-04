@@ -444,7 +444,7 @@ describe('Map view', () => {
 
       place = element.shadowRoot.querySelector('.place');
       expect(place.textContent).to.contain('Synthetic');
-      expect(place.className).to.contain('seeker');
+      expect(place.className).to.contain('visited');
 
       // TODO need to check we wiped the old one
     });
