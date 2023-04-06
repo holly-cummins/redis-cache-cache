@@ -10,15 +10,15 @@ class StartGameButton extends LitElement {
   static styles = css`
     button {
       width: 500px;
-      background-color: #13aa52;
-      border: 1px solid #13aa52;
+      background-color: #177831;
+      border: 1px solid #177831;
       border-radius: 4px;
       box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px 0;
       box-sizing: border-box;
       color: #fff;
       cursor: pointer;
-      font-size: 16px;
-      font-weight: 400;
+      font-size: 14px;
+      font-weight: 500;
       outline: none;
       outline: 0;
       padding: 10px 25px;
