@@ -1,58 +1,67 @@
-import { css, html, LitElement } from 'lit';
+import { css, html } from 'lit';
+import { BaseElement } from './base-element.js';
 
 // This is only needed for single-point or row or column cases, and the exact value doesn't matter then
 const defaultScaleFactor = 10000;
 
-const width = 1400;
-const height = width * 0.75;
+// Ideally we wouldn't hard-code this, but we need to know it at render-time to do calculations; reading our own values at
+// render time is not reliable because we haven't finished rendering
+// If we wanted to be fancy we could do a @media query in the css and have scale factors to multiply by
+const width = 1000;
+const height = width * 0.65;
 
-class MapView extends LitElement {
-  static styles = css`
-    .map {
-      padding: 0;
-      width: ${width}px;
-      height: ${height}px;
-      position: relative;
-      margin: 80px;
-    }
+class MapView extends BaseElement {
+  static styles = [
+    BaseElement.styles,
+    css`
+      .map {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: ${width}px;
+        height: ${height}px;
+        padding: 0;
+        margin: 80px;
+      }
 
-    .place {
-      position: absolute;
-    }
+      .place {
+        position: absolute;
+      }
 
-    .seeker {
-      color: blue;
-    }
+      .seeker {
+        color: blue;
+      }
 
-    .discovery {
-      color: red;
-    }
+      .discovery {
+        color: red;
+      }
 
-    .hiding {
-      color: green;
-    }
+      .hiding {
+        color: green;
+      }
 
-    .visited {
-      color: grey;
-    }
+      .visited {
+        color: grey;
+      }
 
-    .normal {
-      color: black;
-    }
+      .normal {
+        color: black;
+      }
 
-    .marker {
-      width: 4px;
-      height: 4px;
-      transform: translateX(-2px) translateY(-2px);
-      background-color: black;
-    }
+      .marker {
+        width: 4px;
+        height: 4px;
+        transform: translateX(-2px) translateY(-2px);
+        background-color: black;
+      }
 
-    .label {
-      width: 100px; // an arbitrary width, so we can center in it
-      text-align: center;
-      transform: translateX(-50%) translateY(-120%);
-    }
-  `;
+      .label {
+        width: 100px; // an arbitrary width, so we can center in it
+        text-align: center;
+        transform: translateX(-50%) translateY(-120%);
+      }
+    `,
+  ];
 
   static get properties() {
     return {

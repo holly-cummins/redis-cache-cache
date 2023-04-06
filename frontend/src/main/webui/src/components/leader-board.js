@@ -1,25 +1,30 @@
-import { css, html, LitElement } from 'lit';
+import { css, html } from 'lit';
+import { BaseElement } from './base-element.js';
 
-class Leaderboard extends LitElement {
-  static styles = css`
-    .leaderboard {
-      display: flex;
-      flex-direction: column;
-      width: 500px; // Slightly clunky hardcoding to avoid this element being squished
-    }
+class Leaderboard extends BaseElement {
+  static styles = [
+    BaseElement.styles,
+    css`
+      .leaderboard {
+        display: flex;
+        flex-direction: column;
+        padding: 2rem;
+        width: 300px; // Slightly clunky hardcoding to avoid this element being squished
+      }
 
-    table {
-    }
+      table {
+      }
 
-    td {
-      text-align: left;
-      padding-bottom: 1.25rem;
-    }
+      td {
+        text-align: left;
+        padding-bottom: 0.1rem;
+      }
 
-    .numeric {
-      text-align: right;
-    }
-  `;
+      .numeric {
+        text-align: right;
+      }
+    `,
+  ];
 
   render() {
     if (!this.data) {

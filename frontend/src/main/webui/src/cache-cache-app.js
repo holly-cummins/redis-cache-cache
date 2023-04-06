@@ -4,8 +4,6 @@ import './components/start-game-button.js';
 import './components/event-ticker.js';
 import './components/map-view.js';
 
-const logo = new URL('../assets/super-cucumber.png', import.meta.url).href;
-
 class CacheCacheApp extends LitElement {
   static styles = css`
     :host {
@@ -16,7 +14,6 @@ class CacheCacheApp extends LitElement {
       justify-content: flex-start;
       font-size: calc(10px + 2vmin);
       color: #1a2b42;
-      max-width: 960px;
       margin: 0 auto;
       text-align: center;
       background-color: var(--cache-cache-app-background-color);
@@ -24,6 +21,7 @@ class CacheCacheApp extends LitElement {
 
     main {
       flex-grow: 1;
+      width: 100%;
     }
 
     .dashboard {
@@ -34,6 +32,7 @@ class CacheCacheApp extends LitElement {
     .row {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
     }
 
     .logo {
@@ -68,15 +67,13 @@ class CacheCacheApp extends LitElement {
   render() {
     return html`
       <main>
-        <h1>C'est cache-cache!</h1>
         <start-game-button></start-game-button>
         <div class="dashboard">
           <div class="row">
+            <event-ticker></event-ticker>
             <map-view></map-view>
             <leader-board></leader-board>
           </div>
-          <event-ticker></event-ticker>
-          <div class="logo"><img alt="super-cucumber" src=${logo} /></div>
         </div>
       </main>
 

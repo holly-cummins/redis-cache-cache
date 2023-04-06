@@ -1,27 +1,41 @@
-import { css, html, LitElement } from 'lit';
+import { css, html } from 'lit';
+import { BaseElement } from './base-element.js';
 
-class EventTicker extends LitElement {
-  static styles = css`
-    ul {
-      display: flex;
-      flex-direction: column;
-      list-style-type: none;
-    }
+class EventTicker extends BaseElement {
+  static styles = [
+    BaseElement.styles,
+    css`
+      .ticker {
+        overflow: scroll;
+        max-height: 200px;
+        z-index: 2;
+      }
 
-    li {
-      text-align: left;
-      font-family: Courier, monospace;
-      font-size: 1.5rem;
-    }
-  `;
+      ul {
+        display: flex;
+        flex-direction: column;
+        list-style-type: none;
+      }
+
+      li {
+        text-align: left;
+        font-family: Courier, monospace;
+        font-size: 14px;
+      }
+    `,
+  ];
 
   render() {
     if (!this.events) {
-      return html` <h2>Rien n'est encore arrivé ...</h2> `;
+      return html`
+        <ul class="ticker">
+          <li>Rien n'est encore arrivé ...</li>
+        </ul>
+      `;
     }
 
     return html`
-      <ul>
+      <ul class="ticker">
         ${this.events.map(
           entry => html` <li>${EventTicker.format(entry)}</li> `
         )}
