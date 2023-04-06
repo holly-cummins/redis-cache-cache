@@ -1,24 +1,52 @@
 import { css, html, LitElement } from 'lit';
 
+const fetchData = async () => {
+  await fetch('http://localhost:8091/games', {
+    method: 'POST',
+  });
+};
+
 class StartGameButton extends LitElement {
   static styles = css`
     button {
-      background-color: green;
-      color: white;
-      padding: 1em;
-      font-size: 1em;
+      width: 500px;
+      background-color: #13aa52;
+      border: 1px solid #13aa52;
+      border-radius: 4px;
+      box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px 0;
+      box-sizing: border-box;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 400;
+      outline: none;
+      outline: 0;
+      padding: 10px 25px;
+      text-align: center;
+      transform: translateY(0);
+      transition: transform 150ms, box-shadow 150ms;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    button:hover {
+      box-shadow: rgba(0, 0, 0, 0.15) 0 3px 9px 0;
+      transform: translateY(-2px);
+    }
+
+    @media (min-width: 768px) {
+      button {
+        padding: 10px 30px;
+      }
     }
   `;
 
   render() {
-    return html` <button @click="${this.fetchData}">Démarrer un jeu</button> `;
+    return html`
+      <button @click="${fetchData}">Démarrer un jeu de cache-cache</button>
+    `;
   }
-
-  fetchData = async () => {
-    await fetch('http://localhost:8091/games', {
-      method: 'POST',
-    });
-  };
 }
 
 // Custom elements have to have a hyphen in the name, even in cases like this, where it doesn't really make sense
