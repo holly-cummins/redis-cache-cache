@@ -8,8 +8,13 @@ class Leaderboard extends BaseElement {
       .leaderboard {
         display: flex;
         flex-direction: column;
-        padding: 2rem;
-        width: 300px; // Slightly clunky hardcoding to avoid this element being squished
+        padding: 1rem;
+        margin: 1rem;
+        width: 300px;
+        border: 1px lightgray solid;
+        border-radius: 5px;
+        box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px,
+          rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
       }
 
       table {
@@ -32,7 +37,7 @@ class Leaderboard extends BaseElement {
     }
     return html`
       <div class="leaderboard">
-        <h2>Les scores<br />(jusqu'à présent)</h2>
+        <h2>Les scores</h2>
         <table>
           ${this.data.map(
             entry =>
