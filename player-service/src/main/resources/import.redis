@@ -1,3 +1,5 @@
 HSET hide-and-seek:players f1c7e9e6-9c7d-4a5d-9b7f-1a7d5a8f8e9e '{"name": "super-cucumber", "picture": "...", "speed": 30}'
 HSET hide-and-seek:players b5b6e9d7-8c6d-4a5d-9b7f-1a7d5a8f8e9e '{"name": "raving rabbit", "picture": "...", "speed": 15}'
 HSET hide-and-seek:players a5b6e9d7-8c6d-4a5d-9b7f-1a7d5a8f8e9e '{"name": "frogman", "picture": "...", "speed": 20}'
+HSET hide-and-seek:players 5d7f0c9d-8b7e-4f6e-8c2d-3a5f6b6d1a9c '{"name": "Rooster Bold", "picture": "...", "speed": 10}'
+HSET hide-and-seek:players 3e9b8f0a-3c7a-4e5f-bd3c-2b4b7a8d1a9c '{"name": "Ardent Sloth", "picture": "...", "speed": 5}'
