@@ -22,7 +22,7 @@ class PlayerControllerTest {
                 .statusCode(200)
                 .extract().response().as(new TypeRef<List<Player>>() {
                 });
-        assertEquals(3, list.size());
+        assertEquals(5, list.size());
     }
 
     @Test
@@ -55,7 +55,7 @@ class PlayerControllerTest {
                 .statusCode(200)
                 .extract().response().as(new TypeRef<List<Player>>() {
                 });
-        assertEquals(4, list.size());
+        assertEquals(6, list.size());
 
 
         get("/" + added.id())
@@ -71,7 +71,7 @@ class PlayerControllerTest {
                 .statusCode(200)
                 .extract().response().as(new TypeRef<List<Player>>() {
                 });
-        assertEquals(3, list.size());
+        assertEquals(5, list.size());
 
         get("/" + added.id())
                 .then().statusCode(404);
