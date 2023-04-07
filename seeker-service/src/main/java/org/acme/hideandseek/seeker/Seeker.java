@@ -33,7 +33,8 @@ public class Seeker implements Runnable {
 
 
     public Seeker(PlaceRepository repository, RedisDataSource redis,
-                  @ConfigProperty(name = "hide-and-seek.seeker-initial-position", defaultValue = "Devoxx") String initialPosition) {
+                  @ConfigProperty(name = "hide-and-seek.seeker-initial-position", defaultValue = "Devoxx")
+                  String initialPosition) {
         this.redis = redis;
         this.repository = repository;
 
@@ -53,7 +54,8 @@ public class Seeker implements Runnable {
                     case GAME_STARTED -> {
                         var ev = event.as(Event.GameStartedEvent.class);
                         if (this.game == null) {
-                            LOGGER.infof("Received game started event (%s). The seeker is %s", ev.gameId, ev.seeker.name());
+                            LOGGER.infof("Received game started event (%s). " +
+                                    "The seeker is %s", ev.gameId, ev.seeker.name());
                             var copy = new ArrayList<>(repository.getPlaceNames());
                             Collections.shuffle(copy);
                             this.placesToVisit = copy.iterator();
@@ -62,6 +64,7 @@ public class Seeker implements Runnable {
                             goToPlace(placesToVisit.next());
                         }
                     }
+
                     case GAME_ENDED -> {
                         var ev = event.as(Event.GameEndedEvent.class);
                         if (ev.gameId.equals(this.game)) {
@@ -71,11 +74,14 @@ public class Seeker implements Runnable {
                             this.placesToVisit = null;
                         }
                     }
+
                     case SEEKER_ARRIVED -> {
                         var ev = event.as(Event.SeekerArrivedAtEvent.class);
                         if (ev.gameId.equals(this.game)) {
                             this.position = ev.place;
-                            redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game:"+ game, new Event.SeekerAtPositionEvent(game, this.position));
+                            var positionEvent = new Event.SeekerAtPositionEvent(game, this.position);
+                            redis.list(Event.SeekerAtPositionEvent.class)
+                                    .lpush("hide-and-seek:game:"+ game, positionEvent);
                             if (placesToVisit.hasNext()) {
                                 goToPlace(placesToVisit.next());
                             }
@@ -89,13 +95,16 @@ public class Seeker implements Runnable {
     private void goToPlace(String destination) {
         var distance = redis.geo(String.class).geodist("hide-and-seek:geo", position, destination, GeoUnit.M);
         var duration = (int) (distance.orElse(0.0) / player.speed());
-        LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, it will take %sms", player.name(), position, destination, distance.orElse(0.0), duration);
-        redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game:"+ game, new Event.SeekerMoveEvent(game, this.position, destination, duration, distance.orElse(0.0)));
+        LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, " +
+                "it will take %sms", player.name(), position, destination, distance.orElse(0.0), duration);
+        redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game:"+ game,
+                new Event.SeekerMoveEvent(game, this.position, destination, duration, distance.orElse(0.0)));
         Thread.ofVirtual().start(() -> {
             try {
                 Thread.sleep(duration);
                 if (game != null) {
-                    redis.list(Event.SeekerArrivedAtEvent.class).lpush(SEEKER_KEY, new Event.SeekerArrivedAtEvent(game, destination));
+                    redis.list(Event.SeekerArrivedAtEvent.class).lpush(SEEKER_KEY,
+                            new Event.SeekerArrivedAtEvent(game, destination));
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

@@ -21,7 +21,10 @@ public class PlaceRepository {
         for (String key : redis.key().keys("hide-and-seek:places:*")) {
             Place place = redis.json().jsonGet(key, Place.class);
             String[] pos = place.coordinates().split(",");
-            redis.geo(String.class).geoadd("hide-and-seek:geo", Double.parseDouble(pos[0]), Double.parseDouble(pos[1]), place.name());
+            redis.geo(String.class)
+                    .geoadd("hide-and-seek:geo",
+                            Double.parseDouble(pos[0]), Double.parseDouble(pos[1]),
+                            place.name());
         }
     }
 

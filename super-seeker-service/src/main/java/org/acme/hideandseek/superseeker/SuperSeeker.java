@@ -73,14 +73,16 @@ public class SuperSeeker implements Runnable {
                 switch (event.kind) {
                     case GAME_STARTED -> {
                         var gse = event.as(Event.GameStartedEvent.class);
-                        LOGGER.infof("Received game started event (%s). The seeker is %s", gse.gameId, gse.seeker.name());
+                        LOGGER.infof("Received game started event (%s). The seeker is %s",
+                                gse.gameId, gse.seeker.name());
                         this.player = gse.seeker;
                         this.game = gse.gameId;
                         var places = repository.getPlaceNames();
                         // Pick a random starting point
                         this.position = places.get(new Random().nextInt(places.size() - 1));
                         visited.add(this.position);
-                        redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game:"+ game, new Event.SeekerAtPositionEvent(game, this.position));
+                        redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game:"+ game,
+                                new Event.SeekerAtPositionEvent(game, this.position));
                         goToPlace(pickNext());
                     }
                     case GAME_ENDED -> {
@@ -93,7 +95,8 @@ public class SuperSeeker implements Runnable {
                         if (game != null) {
                             this.position = event.as(Event.SeekerArrivedAtEvent.class).place;
                             visited.add(this.position);
-                            redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game:"+ game, new Event.SeekerAtPositionEvent(game, this.position));
+                            redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game:"+ game,
+                                    new Event.SeekerAtPositionEvent(game, this.position));
                             goToPlace(pickNext());
                         }
                     }
@@ -126,7 +129,8 @@ public class SuperSeeker implements Runnable {
         }
         var duration = (int) (next.distance / player.speed());
         LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, it will take %sms", player.name(), position, next.destination, next.distance, duration);
-        redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game:"+ game, new Event.SeekerMoveEvent(game, this.position, next.destination, duration, next.distance));
+        redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game:"+ game,
+                new Event.SeekerMoveEvent(game, this.position, next.destination, duration, next.distance));
         Thread.ofVirtual().start(() -> {
             try {
                 Thread.sleep(duration);

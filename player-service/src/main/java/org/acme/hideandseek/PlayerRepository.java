@@ -47,7 +47,7 @@ public class PlayerRepository {
         return !redis.withTransaction(
                         // Before the transaction, get the existing player
                         con -> con.hash(Player.class).hget(PLAYER_KEY, id),
-                        // In the transaction, update the player is it exists
+                        // In the transaction, update the player if it exists
                         (found, tx) -> {
                             if (found == null) {
                                 tx.discard();
