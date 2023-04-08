@@ -15,13 +15,13 @@ class MapView extends BaseElement {
     BaseElement.styles,
     css`
       .map {
-        position: absolute;
         left: 0;
         top: 0;
         width: ${width}px;
         height: ${height}px;
         padding: 0;
         margin: 80px;
+        z-index: 0;
       }
 
       .place {
@@ -77,7 +77,7 @@ class MapView extends BaseElement {
 
   render() {
     if (!this.places) {
-      return html` <h2>Loading...</h2> `;
+      return html` <h2>Aucun lieu n'a été ajouté</h2> `;
     }
     return html`
       <div class="map">
@@ -120,61 +120,96 @@ class MapView extends BaseElement {
     </div>`;
   }
 
-  async fetchData() {
+  fetchData = async () => {
     try {
       const response = await fetch('http://localhost:8092/places/');
-      const places = await response?.json();
-      // NOTE! You would think the coordinates are latitude,longitude, but redis swaps those
-      const latitudes = places.map(place => place.coordinates.split(',')[1]);
-      const longitudes = places.map(place => place.coordinates.split(',')[0]);
+      this.places = await response?.json();
 
-      // How many degrees we expect the map to cover
-      const minLatitude = Math.min(...latitudes);
-      const minLongitude = Math.min(...longitudes);
-
-      const latitudeRange = Math.max(...latitudes) - minLatitude;
-      const longitudeRange = Math.max(...longitudes) - minLongitude;
-
-      // This is simple equirectangular projection. The npm package proj4 would be more precise, but also harder
-      // See https://stackoverflow.com/questions/16266809/convert-from-latitude-longitude-to-x-y for details
-      // Convert degrees to radians
-      const latitudeInRadians = (minLatitude / 180) * Math.PI;
-
-      // This adjusts the up-and-down-squishedness of the map
-      // We can use a geographically 'correct' value, or tune it to look good
-      // No matter what value we set for this, the tests should still pass
-      this.aspectRatio = Math.cos(latitudeInRadians);
-
-      // check height and width both to make sure it fits
-      this.scaleFactor = Math.min(
-        longitudeRange > 0
-          ? width / (longitudeRange * this.aspectRatio)
-          : defaultScaleFactor,
-        latitudeRange > 0 ? height / latitudeRange : defaultScaleFactor
-      );
-
-      const heightInDegrees = height / this.scaleFactor;
-      const widthInDegrees = width / (this.scaleFactor * this.aspectRatio);
-
-      this.latitudeOffset = minLatitude - (heightInDegrees - latitudeRange) / 2;
-      this.longitudeOffset =
-        minLongitude - (widthInDegrees - longitudeRange) / 2;
-
-      this.places = places;
+      this.processPlaces();
     } catch (e) {
-      console.warn('Could not fetch map information.');
+      console.warn('Could not fetch map information.', e);
       this.places = [];
     }
-  }
+  };
+
+  queryData = async e => {
+    const name = e.detail?.place;
+    try {
+      const response = await fetch(
+        `http://localhost:8092/places/search?query=${name}`
+      );
+      const newPlaces = await response?.json();
+      if (response.status === 200) {
+        if (newPlaces) {
+          const concattedPlaces = newPlaces.concat(this.places || []);
+          // Strip places with the same name
+          this.places = concattedPlaces.filter((element, index) => {
+            return (
+              concattedPlaces.findIndex(
+                secondElement => element.name === secondElement.name
+              ) === index
+            );
+          });
+
+          this.processPlaces();
+        }
+      }
+    } catch (e) {
+      console.warn('Could not fetch map information.', e);
+      this.places = [];
+    }
+  };
+
+  processPlaces = () => {
+    const places = this.places;
+    // NOTE! You would think the coordinates are latitude,longitude, but redis swaps those
+    const latitudes = places.map(place => place.coordinates.split(',')[1]);
+    const longitudes = places.map(place => place.coordinates.split(',')[0]);
+
+    // How many degrees we expect the map to cover
+    const minLatitude = Math.min(...latitudes);
+    const minLongitude = Math.min(...longitudes);
+
+    const latitudeRange = Math.max(...latitudes) - minLatitude;
+    const longitudeRange = Math.max(...longitudes) - minLongitude;
+
+    // This is simple equirectangular projection. The npm package proj4 would be more precise, but also harder
+    // See https://stackoverflow.com/questions/16266809/convert-from-latitude-longitude-to-x-y for details
+    // Convert degrees to radians
+    const latitudeInRadians = (minLatitude / 180) * Math.PI;
+
+    // This adjusts the up-and-down-squishedness of the map
+    // We can use a geographically 'correct' value, or tune it to look good
+    // No matter what value we set for this, the tests should still pass
+    this.aspectRatio = Math.cos(latitudeInRadians);
+
+    // check height and width both to make sure it fits
+    this.scaleFactor = Math.min(
+      longitudeRange > 0
+        ? width / (longitudeRange * this.aspectRatio)
+        : defaultScaleFactor,
+      latitudeRange > 0 ? height / latitudeRange : defaultScaleFactor
+    );
+
+    const heightInDegrees = height / this.scaleFactor;
+    const widthInDegrees = width / (this.scaleFactor * this.aspectRatio);
+
+    this.latitudeOffset = minLatitude - (heightInDegrees - latitudeRange) / 2;
+    this.longitudeOffset = minLongitude - (widthInDegrees - longitudeRange) / 2;
+  };
 
   connectedCallback() {
     super.connectedCallback();
-    this.fetchData();
+    window.addEventListener('add-all-places', this.fetchData, {});
+    window.addEventListener('add-place', this.queryData, {});
     this.openConnection();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    window.removeEventListener('add-all-places', this.fetchData, {});
+    window.removeEventListener('add-place', this.queryData, {});
+
     this.closeConnection();
   }
 

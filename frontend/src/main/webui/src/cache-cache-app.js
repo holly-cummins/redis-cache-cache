@@ -1,6 +1,8 @@
 import { css, html, LitElement } from 'lit';
 import './components/leader-board.js';
 import './components/start-game-button.js';
+import './components/add-place-button.js';
+import './components/add-all-places-button.js';
 import './components/event-ticker.js';
 import './components/map-view.js';
 
@@ -20,6 +22,8 @@ class CacheCacheApp extends LitElement {
     }
 
     main {
+      display: flex;
+      flex-direction: column;
       flex-grow: 1;
       width: 100%;
     }
@@ -67,6 +71,10 @@ class CacheCacheApp extends LitElement {
   render() {
     return html`
       <main>
+        <div class="row">
+          <add-place-button></add-place-button>
+          <add-all-places-button></add-all-places-button>
+        </div>
         <start-game-button></start-game-button>
         <div class="dashboard">
           <div class="row">

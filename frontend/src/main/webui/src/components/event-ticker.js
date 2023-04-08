@@ -9,7 +9,9 @@ class EventTicker extends BaseElement {
         margin: 0.5rem;
         padding: 0.5rem;
         overflow: scroll;
+        width: 350px;
         max-height: 150px;
+        position: absolute;
         z-index: 2;
         border: 1px lightgray solid;
         border-radius: 5px;

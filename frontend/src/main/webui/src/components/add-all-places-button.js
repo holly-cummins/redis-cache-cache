@@ -1,25 +1,19 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
 
-const fetchData = async () => {
-  await fetch('http://localhost:8091/games', {
-    method: 'POST',
-  });
-};
-
-class StartGameButton extends BaseElement {
+export class AddAllPlacesButton extends BaseElement {
   static styles = [
     BaseElement.styles,
     css`
       button {
-        margin: 2rem;
-        width: 500px;
-        background-color: #177831;
-        border: 1px solid #177831;
+        margin: 1rem;
+        width: 250px;
+        background-color: #9dc183;
+        border: 1px solid #9dc183;
         border-radius: 4px;
         box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px 0;
         box-sizing: border-box;
-        color: #fff;
+        color: black;
         cursor: pointer;
         font-size: 14px;
         font-weight: 500;
@@ -50,10 +44,18 @@ class StartGameButton extends BaseElement {
 
   render() {
     return html`
-      <button @click="${fetchData}">Démarrer un jeu de cache-cache</button>
+      <button
+        @click="${() => {
+          window.dispatchEvent(
+            new CustomEvent('add-all-places', { composed: true, bubbles: true })
+          );
+        }}"
+      >
+        Ajouter tout les lieus
+      </button>
     `;
   }
 }
 
 // Custom elements have to have a hyphen in the name, even in cases like this, where it doesn't really make sense
-customElements.define('start-game-button', StartGameButton);
+customElements.define('add-all-places-button', AddAllPlacesButton);
