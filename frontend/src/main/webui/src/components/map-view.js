@@ -143,25 +143,24 @@ class MapView extends BaseElement {
         if (newPlaces) {
           const concattedPlaces = newPlaces.concat(this.places || []);
           // Strip places with the same name
-          this.places = concattedPlaces.filter((element, index) => {
-            return (
+          this.places = concattedPlaces.filter(
+            (element, index) =>
               concattedPlaces.findIndex(
                 secondElement => element.name === secondElement.name
               ) === index
-            );
-          });
+          );
 
           this.processPlaces();
         }
       }
-    } catch (e) {
-      console.warn('Could not fetch map information.', e);
+    } catch (err) {
+      console.warn('Could not fetch map information.', err);
       this.places = [];
     }
   };
 
   processPlaces = () => {
-    const places = this.places;
+    const { places } = this;
     // NOTE! You would think the coordinates are latitude,longitude, but redis swaps those
     const latitudes = places.map(place => place.coordinates.split(',')[1]);
     const longitudes = places.map(place => place.coordinates.split(',')[0]);
