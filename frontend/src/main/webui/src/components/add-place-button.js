@@ -43,8 +43,8 @@ class AddPlaceButton extends BaseElement {
         <input
           type="text"
           placeholder="Lieu"
-          value="${this.place}"
-          onchange="${this.onInputChange}"
+          .value="${this.place}"
+          @change="${this.onInputChange}"
         />
         <button
           @click="${() => {
