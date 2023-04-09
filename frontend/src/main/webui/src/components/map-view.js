@@ -1,5 +1,6 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
+import './map-image.js';
 
 // This is only needed for single-point or row or column cases, and the exact value doesn't matter then
 const defaultScaleFactor = 10000;
@@ -14,6 +15,12 @@ class MapView extends BaseElement {
   static styles = [
     BaseElement.styles,
     css`
+      .places {
+        height: 500px;
+        position: relative;
+        width: 100%;
+      }
+
       .map {
         left: 0;
         top: 0;
@@ -72,6 +79,10 @@ class MapView extends BaseElement {
       longitudeOffset: {},
       aspectRatio: {},
       eventSource: {},
+      heightInDegrees: {},
+      widthInDegrees: {},
+      minLatitude: {},
+      minLongitude: {},
     };
   }
 
@@ -81,8 +92,15 @@ class MapView extends BaseElement {
     }
     return html`
       <div class="map">
-        ${this.places.map(entry => this.plot(entry))}
-        </table>
+        <map-image
+          height="${height}"
+          width="${width}"
+          heightInDegrees="${this.heightInDegrees}"
+          widthInDegrees="${this.widthInDegrees}"
+          minLatitude="${this.minLatitude}"
+          minLongitude="${this.minLongitude}"
+        ></map-image>
+        <div class="places">${this.places.map(entry => this.plot(entry))}</div>
       </div>
     `;
   }
@@ -166,16 +184,16 @@ class MapView extends BaseElement {
     const longitudes = places.map(place => place.coordinates.split(',')[0]);
 
     // How many degrees we expect the map to cover
-    const minLatitude = Math.min(...latitudes);
-    const minLongitude = Math.min(...longitudes);
+    this.minLatitude = Math.min(...latitudes);
+    this.minLongitude = Math.min(...longitudes);
 
-    const latitudeRange = Math.max(...latitudes) - minLatitude;
-    const longitudeRange = Math.max(...longitudes) - minLongitude;
+    const latitudeRange = Math.max(...latitudes) - this.minLatitude;
+    const longitudeRange = Math.max(...longitudes) - this.minLongitude;
 
     // This is simple equirectangular projection. The npm package proj4 would be more precise, but also harder
     // See https://stackoverflow.com/questions/16266809/convert-from-latitude-longitude-to-x-y for details
     // Convert degrees to radians
-    const latitudeInRadians = (minLatitude / 180) * Math.PI;
+    const latitudeInRadians = (this.minLatitude / 180) * Math.PI;
 
     // This adjusts the up-and-down-squishedness of the map
     // We can use a geographically 'correct' value, or tune it to look good
@@ -190,11 +208,18 @@ class MapView extends BaseElement {
       latitudeRange > 0 ? height / latitudeRange : defaultScaleFactor
     );
 
-    const heightInDegrees = height / this.scaleFactor;
-    const widthInDegrees = width / (this.scaleFactor * this.aspectRatio);
+    this.heightInDegrees = height / this.scaleFactor;
+    this.widthInDegrees = width / (this.scaleFactor * this.aspectRatio);
 
-    this.latitudeOffset = minLatitude - (heightInDegrees - latitudeRange) / 2;
-    this.longitudeOffset = minLongitude - (widthInDegrees - longitudeRange) / 2;
+    console.log(
+      'will set degree metrics to',
+      this.heightInDegrees,
+      this.widthInDegrees
+    );
+    this.latitudeOffset =
+      this.minLatitude - (this.heightInDegrees - latitudeRange) / 2;
+    this.longitudeOffset =
+      this.minLongitude - (this.widthInDegrees - longitudeRange) / 2;
   };
 
   connectedCallback() {
