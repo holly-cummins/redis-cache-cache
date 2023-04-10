@@ -16,9 +16,14 @@ class MapView extends BaseElement {
     BaseElement.styles,
     css`
       .places {
-        height: 500px;
-        position: relative;
+        height: ${height}px;
         width: 100%;
+      }
+
+      .outer {
+        left: 0;
+        position: absolute;
+        margin: 80px;
       }
 
       .map {
@@ -27,7 +32,6 @@ class MapView extends BaseElement {
         width: ${width}px;
         height: ${height}px;
         padding: 0;
-        margin: 80px;
         z-index: 0;
       }
 
@@ -91,16 +95,21 @@ class MapView extends BaseElement {
       return html` <h2>Aucun lieu n'a été ajouté</h2> `;
     }
     return html`
-      <div class="map">
-        <map-image
-          height="${height}"
-          width="${width}"
-          heightInDegrees="${this.heightInDegrees}"
-          widthInDegrees="${this.widthInDegrees}"
-          minLatitude="${this.minLatitude}"
-          minLongitude="${this.minLongitude}"
-        ></map-image>
-        <div class="places">${this.places.map(entry => this.plot(entry))}</div>
+      <div class="outer">
+        <div class="map">
+          <map-image
+            height="${height}"
+            width="${width}"
+            heightInDegrees="${this.heightInDegrees}"
+            widthInDegrees="${this.widthInDegrees}"
+            minLatitude="${this.minLatitude}"
+            minLongitude="${this.minLongitude}"
+            isSinglePoint="${this.scaleFactor === defaultScaleFactor}"
+          ></map-image>
+          <div class="places">
+            ${this.places.map(entry => this.plot(entry))}
+          </div>
+        </div>
       </div>
     `;
   }
@@ -211,11 +220,6 @@ class MapView extends BaseElement {
     this.heightInDegrees = height / this.scaleFactor;
     this.widthInDegrees = width / (this.scaleFactor * this.aspectRatio);
 
-    console.log(
-      'will set degree metrics to',
-      this.heightInDegrees,
-      this.widthInDegrees
-    );
     this.latitudeOffset =
       this.minLatitude - (this.heightInDegrees - latitudeRange) / 2;
     this.longitudeOffset =
