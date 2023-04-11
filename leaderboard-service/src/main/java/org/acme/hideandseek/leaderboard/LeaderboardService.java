@@ -14,7 +14,7 @@ public class LeaderboardService {
 
     public static final String TOPIC_EVENTS = "hide-and-seek/events";
 
-    private static final String KEY = "leaderboard";
+    public static final String KEY = "leaderboard";
     private final RedisDataSource redis;
 
     public LeaderboardService(RedisDataSource redis) {
@@ -30,10 +30,6 @@ public class LeaderboardService {
     private void updateScore(GameEvent event) {
         // seeker = number of found players -1 (the seeker)
         increment(event.seeker, event.hiders.keySet().size() - event.nonDiscoveredPlayers.orElse(0));
-        // not discovered players: + 1
-        for (String hider : event.hiders.keySet()) {
-            increment(hider, 1);
-        }
         stream.onNext(getLeaderboard());
     }
 
