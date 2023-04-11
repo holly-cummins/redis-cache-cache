@@ -1,6 +1,7 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
 import './map-image.js';
+import './seeker-path.js';
 
 // This is only needed for single-point or row or column cases, and the exact value doesn't matter then
 const defaultScaleFactor = 10000;
@@ -78,6 +79,7 @@ class MapView extends BaseElement {
     return {
       places: {},
       positions: {},
+      seeks: { type: Array },
       scaleFactor: {},
       latitudeOffset: {},
       longitudeOffset: {},
@@ -97,6 +99,10 @@ class MapView extends BaseElement {
     return html`
       <div class="outer">
         <div class="map">
+          <seeker-path
+            count=${this.seeks?.length}
+            .points="${this.seeks}"
+          ></seeker-path>
           <map-image
             height="${height}"
             width="${width}"
@@ -128,9 +134,16 @@ class MapView extends BaseElement {
     return [x, y];
   }
 
+  getCoordinatesForPlace(place) {
+    if (place && place.coordinates) {
+      const coordinates = place.coordinates.split(',').map(n => parseFloat(n));
+      return this.transform(coordinates);
+    }
+    return null;
+  }
+
   plot(place) {
-    const coordinates = place.coordinates.split(',').map(n => parseFloat(n));
-    const transformed = this.transform(coordinates);
+    const transformed = this.getCoordinatesForPlace(place);
     const x = transformed[0];
     const y = transformed[1];
 
@@ -185,6 +198,8 @@ class MapView extends BaseElement {
       this.places = [];
     }
   };
+
+  getPlace = name => this.places?.find(place => place.name === name);
 
   processPlaces = () => {
     const { places } = this;
@@ -273,6 +288,7 @@ class MapView extends BaseElement {
         break;
       case 'NEW_GAME':
         this.positions = {};
+        this.seeks = [];
         break;
       case 'PLAYER_DISCOVERED': {
         this.positions[event.place] = 'discovery';
@@ -280,7 +296,15 @@ class MapView extends BaseElement {
         // Do we want to wipe this?
       }
       case 'SEEKER_MOVE': {
-        // TODO want a nice transition
+        if (!this.seeks) {
+          this.seeks = [];
+        }
+        this.seeks.unshift({
+          to: this.getCoordinatesForPlace(this.getPlace(event.destination)),
+          from: this.getCoordinatesForPlace(this.getPlace(event.place)),
+          duration: event.duration,
+        });
+
         this.positions[event.destination] = 'seeker';
         // Don't overwrite discoveries when we move off them
         if (this.positions[event.place] !== 'discovery') {
