@@ -6,6 +6,12 @@ class SeekerPath extends BaseElement {
     BaseElement.styles,
     // https://css-tricks.com/svg-line-animation-works/ has a good explanation
     css`
+      .map {
+        position: absolute;
+        left: 0;
+        z-index: 10;
+      }
+
       .path {
         stroke-dasharray: 1000;
         stroke-dashoffset: 1000;
@@ -27,7 +33,7 @@ class SeekerPath extends BaseElement {
 
   render() {
     return html` <svg
-      class="test"
+      class="map"
       viewbox="0 0 ${this.width} ${this.height}"
       height="${this.height}px"
       width="${this.width}px"

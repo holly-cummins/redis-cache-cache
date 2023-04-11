@@ -1,5 +1,5 @@
 // This is only needed for single-point or row or column cases, and the exact value doesn't matter then
-const defaultScaleFactor = 10000;
+const defaultScaleFactor = 50000;
 
 class CoordinateConverter {
   height;

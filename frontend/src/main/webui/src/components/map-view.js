@@ -23,13 +23,13 @@ class MapView extends BaseElement {
 
       .outer {
         left: 0;
-        position: absolute;
         margin: 80px;
       }
 
       .map {
         left: 0;
         top: 0;
+        position: relative;
         width: ${width}px;
         height: ${height}px;
         padding: 0;
@@ -106,13 +106,9 @@ class MapView extends BaseElement {
             width="${width}"
           ></seeker-path>
           <map-image
+            .converter="${this.coordinateConverter}"
             height="${height}"
             width="${width}"
-            heightInDegrees="${this.heightInDegrees}"
-            widthInDegrees="${this.widthInDegrees}"
-            minLatitude="${this.minLatitude}"
-            minLongitude="${this.minLongitude}"
-            isSinglePoint="${this.coordinateConverter.isSinglePoint()}"
           ></map-image>
           <div class="places">
             ${this.places.map(entry => this.plot(entry))}
