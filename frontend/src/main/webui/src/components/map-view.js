@@ -2,9 +2,7 @@ import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
 import './map-image.js';
 import './seeker-path.js';
-
-// This is only needed for single-point or row or column cases, and the exact value doesn't matter then
-const defaultScaleFactor = 10000;
+import { CoordinateConverter } from '../geometry/cooordinate-converter.js';
 
 // Ideally we wouldn't hard-code this, but we need to know it at render-time to do calculations; reading our own values at
 // render time is not reliable because we haven't finished rendering
@@ -13,6 +11,8 @@ const width = 1000;
 const height = width * 0.65;
 
 class MapView extends BaseElement {
+  coordinateConverter;
+
   static styles = [
     BaseElement.styles,
     css`
@@ -112,7 +112,7 @@ class MapView extends BaseElement {
             widthInDegrees="${this.widthInDegrees}"
             minLatitude="${this.minLatitude}"
             minLongitude="${this.minLongitude}"
-            isSinglePoint="${this.scaleFactor === defaultScaleFactor}"
+            isSinglePoint="${this.coordinateConverter.isSinglePoint()}"
           ></map-image>
           <div class="places">
             ${this.places.map(entry => this.plot(entry))}
@@ -122,32 +122,8 @@ class MapView extends BaseElement {
     `;
   }
 
-  // Turns latitude and longitude into x and y (left and top) coordinates.
-  transform(coord) {
-    // Remember, latitude and longitude are the opposite order from x and y, so we *would* swap them
-    // ... except that redis GEO format *already* swaps them!
-
-    // We also need to shift our coordinate system from (0,0) being in bottom-left corner to (0,0) being in the top-left corner
-
-    const x =
-      (coord[0] - this.longitudeOffset) * this.scaleFactor * this.aspectRatio;
-    const y = height - (coord[1] - this.latitudeOffset) * this.scaleFactor;
-
-    return [x, y];
-  }
-
-  getCoordinatesForPlace(place) {
-    if (place && place.coordinates) {
-      const coordinates = place.coordinates.split(',').map(n => parseFloat(n));
-      return this.transform(coordinates);
-    }
-    return null;
-  }
-
   plot(place) {
-    const transformed = this.getCoordinatesForPlace(place);
-    const x = transformed[0];
-    const y = transformed[1];
+    const [x, y] = this.coordinateConverter.getCoordinatesForPlace(place);
 
     const position = `left:${x}px; top:${y}px`;
 
@@ -167,7 +143,11 @@ class MapView extends BaseElement {
       const response = await fetch('http://localhost:8092/places/');
       this.places = await response?.json();
 
-      this.processPlaces();
+      this.coordinateConverter = new CoordinateConverter({
+        places: this.places,
+        height,
+        width,
+      });
     } catch (e) {
       console.warn('Could not fetch map information.', e);
       this.places = [];
@@ -192,7 +172,11 @@ class MapView extends BaseElement {
               ) === index
           );
 
-          this.processPlaces();
+          this.coordinateConverter = new CoordinateConverter({
+            places: this.places,
+            height,
+            width,
+          });
         }
       }
     } catch (err) {
@@ -202,46 +186,6 @@ class MapView extends BaseElement {
   };
 
   getPlace = name => this.places?.find(place => place.name === name);
-
-  processPlaces = () => {
-    const { places } = this;
-    // NOTE! You would think the coordinates are latitude,longitude, but redis swaps those
-    const latitudes = places.map(place => place.coordinates.split(',')[1]);
-    const longitudes = places.map(place => place.coordinates.split(',')[0]);
-
-    // How many degrees we expect the map to cover
-    this.minLatitude = Math.min(...latitudes);
-    this.minLongitude = Math.min(...longitudes);
-
-    const latitudeRange = Math.max(...latitudes) - this.minLatitude;
-    const longitudeRange = Math.max(...longitudes) - this.minLongitude;
-
-    // This is simple equirectangular projection. The npm package proj4 would be more precise, but also harder
-    // See https://stackoverflow.com/questions/16266809/convert-from-latitude-longitude-to-x-y for details
-    // Convert degrees to radians
-    const latitudeInRadians = (this.minLatitude / 180) * Math.PI;
-
-    // This adjusts the up-and-down-squishedness of the map
-    // We can use a geographically 'correct' value, or tune it to look good
-    // No matter what value we set for this, the tests should still pass
-    this.aspectRatio = Math.cos(latitudeInRadians);
-
-    // check height and width both to make sure it fits
-    this.scaleFactor = Math.min(
-      longitudeRange > 0
-        ? width / (longitudeRange * this.aspectRatio)
-        : defaultScaleFactor,
-      latitudeRange > 0 ? height / latitudeRange : defaultScaleFactor
-    );
-
-    this.heightInDegrees = height / this.scaleFactor;
-    this.widthInDegrees = width / (this.scaleFactor * this.aspectRatio);
-
-    this.latitudeOffset =
-      this.minLatitude - (this.heightInDegrees - latitudeRange) / 2;
-    this.longitudeOffset =
-      this.minLongitude - (this.widthInDegrees - longitudeRange) / 2;
-  };
 
   connectedCallback() {
     super.connectedCallback();
@@ -302,8 +246,12 @@ class MapView extends BaseElement {
           this.seeks = [];
         }
         this.seeks.unshift({
-          to: this.getCoordinatesForPlace(this.getPlace(event.destination)),
-          from: this.getCoordinatesForPlace(this.getPlace(event.place)),
+          to: this.coordinateConverter.getCoordinatesForPlace(
+            this.getPlace(event.destination)
+          ),
+          from: this.coordinateConverter.getCoordinatesForPlace(
+            this.getPlace(event.place)
+          ),
           duration: event.duration,
         });
 

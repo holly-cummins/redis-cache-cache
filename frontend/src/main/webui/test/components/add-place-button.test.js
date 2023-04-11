@@ -3,7 +3,7 @@ import { expect, fixture } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 
-import '../src/components/add-place-button.js';
+import '../../src/components/add-place-button.js';
 
 describe('Add place Button', () => {
   let element;

@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { expect, fixture } from '@open-wc/testing';
 
-import '../src/components/seeker-path.js';
+import '../../src/components/seeker-path.js';
 
 describe('Seeker Path', () => {
   let element;

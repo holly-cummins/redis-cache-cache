@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { expect, fixture } from '@open-wc/testing';
 
-import '../src/cache-cache-app.js';
+import '../../src/cache-cache-app.js';
 
 describe('CacheCacheApp', () => {
   let element;

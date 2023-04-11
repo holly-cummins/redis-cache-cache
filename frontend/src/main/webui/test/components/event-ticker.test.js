@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { expect, fixture, waitUntil } from '@open-wc/testing';
-import '../src/components/event-ticker.js';
+import '../../src/components/event-ticker.js';
 
 describe('Event ticker', () => {
   let element;

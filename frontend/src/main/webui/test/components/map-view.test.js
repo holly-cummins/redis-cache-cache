@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { expect, fixture, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
-import '../src/components/map-view.js';
+import '../../src/components/map-view.js';
 
 const coordsPattern = /left:(-?[0-9.]+)px; top:(-?[0-9.]+)px/;
 
@@ -29,14 +29,13 @@ const places = [
   },
 ];
 
-const mockApiResponse = (body = {}) => {
-  return Promise.resolve(
+const mockApiResponse = (body = {}) =>
+  Promise.resolve(
     new window.Response(JSON.stringify(body), {
       status: 200,
       headers: { 'Content-type': 'application/json' },
     })
   );
-};
 
 function getPosition(element) {
   const place = element.shadowRoot.querySelector('.place');
@@ -152,7 +151,7 @@ describe('Map view', () => {
         expect(element.shadowRoot.textContent).to.contain('Synthetic');
       });
 
-      it('puts the single place on the top edge in the middle', () => {
+      it('puts the place on the top edge in the middle', () => {
         const { left, top } = getPosition(element);
 
         const { maxWidth } = getMapDimensions(element);
@@ -194,7 +193,7 @@ describe('Map view', () => {
         expect(element.shadowRoot.textContent).to.contain('Synthetic');
       });
 
-      it('puts the single place on the bottom edge in the middle', () => {
+      it('puts the place on the bottom edge in the middle', () => {
         const { left, top } = getPosition(element);
 
         const { maxHeight, maxWidth } = getMapDimensions(element);
@@ -236,7 +235,7 @@ describe('Map view', () => {
         expect(element.shadowRoot.textContent).to.contain('Synthetic');
       });
 
-      it('puts the single place on the left edge in the middle', () => {
+      it('puts the place on the left edge in the middle', () => {
         const { left, top } = getPosition(element);
 
         const { maxHeight } = getMapDimensions(element);
@@ -278,7 +277,7 @@ describe('Map view', () => {
         expect(element.shadowRoot.textContent).to.contain('Synthetic');
       });
 
-      it('puts the single place on the right edge in the middle', () => {
+      it('puts the place on the right edge in the middle', () => {
         const { left, top } = getPosition(element);
 
         const { maxHeight, maxWidth } = getMapDimensions(element);
@@ -332,7 +331,8 @@ describe('Map view', () => {
         // Floating point errors mean we can't do precise comparison. Ideally we would use chai-almost, but es6 vs cjs makes that hard
         // If the canvas was square, we'd be at the top-right, but since it's not, we'll be just near the top
         // If the aspect ratio goes far above 1, this test could fail
-        const heightRatio = (maxHeight / maxWidth) * element.aspectRatio;
+        const heightRatio =
+          (maxHeight / maxWidth) * element.coordinateConverter.aspectRatio;
         const gap = ((1 - heightRatio) / 2) * maxWidth;
         expect(Math.round(left)).to.equal(Math.round(maxWidth - gap));
         expect(Math.round(top)).to.equal(maxHeight);
@@ -357,22 +357,6 @@ describe('Map view', () => {
       it('renders the place names', () => {
         expect(element.shadowRoot.textContent).to.contain('Centre Pompidou');
         expect(element.shadowRoot.textContent).to.contain('Musée d’Orsay');
-      });
-
-      // We don't want to reproduce the exact scaling logic in the test, so just check that the value is sensible
-      it('works out a plausible scale factor', () => {
-        expect(element.scaleFactor).to.be.greaterThan(100);
-        expect(element.scaleFactor).to.be.lessThan(40000);
-      });
-
-      it('works out a plausible latitude offset', () => {
-        expect(element.latitudeOffset).to.be.greaterThan(47);
-        expect(element.latitudeOffset).to.be.lessThan(49);
-      });
-
-      it('works out a plausible longitude offset', () => {
-        expect(element.longitudeOffset).to.be.greaterThan(2.1);
-        expect(element.longitudeOffset).to.be.lessThan(3);
       });
 
       // We don't want to reproduce the exact scaling logic in the test, so just check that things are on the page
@@ -509,7 +493,7 @@ describe('Map view', () => {
       expect(element.shadowRoot.textContent).to.contain('Centre Pompidou');
     });
 
-    it('puts the single place exactly in the middle of the map', () => {
+    it('puts the place exactly in the middle of the map', () => {
       const { left, top } = getPosition(element);
 
       const { maxHeight, maxWidth } = getMapDimensions(element);
@@ -554,7 +538,7 @@ describe('Map view', () => {
       expect(element.shadowRoot.textContent).to.contain('Centre Pompidou');
       // We should only have the entry on the map once
       expect(element.shadowRoot.textContent).not.to.match(
-        new RegExp(firstPlace.name + '.*' + firstPlace.name, 's')
+        new RegExp(`${firstPlace.name}.*${firstPlace.name}`, 's')
       );
     });
 

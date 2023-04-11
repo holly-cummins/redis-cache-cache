@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { expect, fixture, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
-import '../src/components/leader-board.js';
+import '../../src/components/leader-board.js';
 
 const mockApiResponse = (body = {}) =>
   Promise.resolve(

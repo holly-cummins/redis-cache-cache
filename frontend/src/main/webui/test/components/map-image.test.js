@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { expect, fixture } from '@open-wc/testing';
-import '../src/components/map-image.js';
+import '../../src/components/map-image.js';
 
 // We have to hard code these here because exporting seems hard
 
@@ -177,7 +177,7 @@ describe('Map image', () => {
 
     xit('adjusts the x position of the map by a quarter', () => {
       // If the minimums are the same, the map should be in the bottom left corner
-      const { x } = getTranslateTransform(element);
+      const { x, y } = getTranslateTransform(element);
       // We actually do need to shift the image to centre it
       expect(Math.round(x)).to.equal(-25);
       expect(Math.round(y)).to.equal(25);
@@ -301,11 +301,9 @@ describe('Map image', () => {
     });
 
     it('assigns an arbitrary (but large) scale to the map', () => {
-      {
-        const { width, height } = getDimensions(element);
-        expect(width).to.be.greaterThan(frameWidth);
-        expect(height).to.be.greaterThan(frameHeight);
-      }
+      const { width, height } = getDimensions(element);
+      expect(width).to.be.greaterThan(frameWidth);
+      expect(height).to.be.greaterThan(frameHeight);
     });
 
     xit('shifts the map up and left', () => {
@@ -340,12 +338,10 @@ describe('Map image', () => {
     });
 
     it('assigns an arbitrary (but large) scale to the map', () => {
-      {
-        const { width, height } = getDimensions(element);
+      const { width, height } = getDimensions(element);
 
-        expect(width).to.be.greaterThan(frameWidth);
-        expect(height).to.be.greaterThan(frameHeight);
-      }
+      expect(width).to.be.greaterThan(frameWidth);
+      expect(height).to.be.greaterThan(frameHeight);
     });
 
     xit('shifts the map to center the point', () => {
@@ -381,12 +377,10 @@ describe('Map image', () => {
     });
 
     it('assigns an arbitrary (but large) scale to the map', () => {
-      {
-        const { width, height } = getDimensions(element);
+      const { width, height } = getDimensions(element);
 
-        expect(width).to.be.greaterThan(frameWidth);
-        expect(height).to.be.greaterThan(frameHeight);
-      }
+      expect(width).to.be.greaterThan(frameWidth);
+      expect(height).to.be.greaterThan(frameHeight);
     });
 
     xit('shifts the map left to center the point', () => {

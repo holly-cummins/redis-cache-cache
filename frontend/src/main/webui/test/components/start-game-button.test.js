@@ -2,35 +2,35 @@ import { html } from 'lit';
 import { expect, fixture } from '@open-wc/testing';
 import sinon from 'sinon';
 
-import '../src/components/add-all-places-button.js';
+import '../../src/components/start-game-button.js';
 
-describe('Add all places Button', () => {
+describe('Start Game Button', () => {
   let element;
-  let stubbedDispatch;
+  let stubbedFetch;
 
   beforeEach(async () => {
-    stubbedDispatch = sinon.stub(window, 'dispatchEvent');
+    stubbedFetch = sinon.stub(window, 'fetch');
 
-    element =
-      await fixture(html` <add-all-places-button></add-all-places-button>`);
+    element = await fixture(html` <start-game-button></start-game-button>`);
   });
 
   afterEach(() => {
-    window.dispatchEvent.restore(); // remove stub
+    window.fetch.restore(); // remove stub
   });
 
   it('renders a button', () => {
     const button = element.shadowRoot.querySelector('button');
     expect(button).to.exist;
-    expect(button.textContent).to.contain('lieus');
+    expect(button.textContent).to.contain('Démarrer un jeu');
   });
 
-  it('sends an event on click', () => {
-    expect(stubbedDispatch).to.have.callCount(0);
+  it('sends a post request on click', () => {
+    expect(stubbedFetch).to.have.callCount(0);
     const button = element.shadowRoot.querySelector('button');
     expect(button).to.exist;
     button.click();
-    expect(stubbedDispatch).to.have.callCount(1);
+    expect(stubbedFetch).to.have.callCount(1);
+    expect(stubbedFetch.getCall(0).args[1]).to.deep.equal({ method: 'POST' });
   });
 
   it('passes the a11y audit', async () => {
