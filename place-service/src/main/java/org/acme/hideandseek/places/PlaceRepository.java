@@ -28,13 +28,13 @@ public class PlaceRepository {
         }
     }
 
-    List<Place> getPlaces() {
+    public List<Place> getPlaces() {
         return redis.key().keys("hide-and-seek:places:*").stream()
                 .map(key -> redis.json().jsonGet(key, Place.class))
                 .collect(Collectors.toList());
     }
 
-    List<Place> search(String query) {
+    public List<Place> search(String query) {
         return redis.search().ftSearch("hide-and-seek:places-index", query)
                 .documents()
                 .stream()

@@ -9,29 +9,29 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 
 public class GameEvent {
-    public final Kind kind;
-    public final String gameId;
+    public Kind kind;
+    public String gameId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public final String seeker;
+    public String seeker;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public final String hider;
+    public String hider;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public final String place;
+    public String place;
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
-    public final Optional<Boolean> seekerWon;
+    public Optional<Boolean> seekerWon;
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
-    public final OptionalLong duration;
+    public OptionalLong duration;
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
-    public final OptionalDouble distance;
+    public OptionalDouble distance;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public final String destination;
+    public String destination;
 
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
-    public final OptionalInt nonDiscoveredPlayers;
+    public OptionalInt nonDiscoveredPlayers;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public final Map<String, String> hiders;
+    public Map<String, String> hiders;
 
     public GameEvent() {
         this.kind = null;

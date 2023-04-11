@@ -1,0 +1,45 @@
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.common.mapper.TypeRef;
+import org.acme.hideandseek.places.Place;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.with;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@QuarkusTest
+class PlaceControllerTest {
+
+    @Test
+    void getAll() {
+        List<Place> list = get("/places")
+                .then()
+                .statusCode(200)
+                .extract().response().as(new TypeRef<List<Place>>() {
+                });
+        assertEquals(17, list.size());
+    }
+
+    @Test
+    void search() {
+        List<Place> list = get("/places/search?query=royal")
+                .then()
+                .statusCode(200)
+                .extract().response().as(new TypeRef<List<Place>>() {
+                });
+        assertEquals(2, list.size());
+
+        list = get("/places/search?query=brouette")
+                .then()
+                .statusCode(200)
+                .extract().response().as(new TypeRef<List<Place>>() {
+                });
+        assertEquals(0, list.size());
+    }
+
+
+}
