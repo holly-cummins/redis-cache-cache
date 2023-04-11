@@ -8,10 +8,6 @@ const imageMaxLatitude = 48.91;
 const imageMinLongitude = 2.22;
 const imageMaxLongitude = 2.45;
 
-// Why aren't these constants used? They seem important to the algorithm
-const rawImageHeight = 1668;
-const rawImageWidth = 2224;
-
 const rawImageHeightInDegrees = imageMaxLatitude - imageMinLatitude;
 const rawImageWidthInDegrees = imageMaxLongitude - imageMinLongitude;
 
@@ -50,22 +46,22 @@ export class MapImage extends BaseElement {
   }
 
   render() {
+    // The attribute comes in as a string, so we need to convert to a boolean
+    const isSinglePoint = this.isSinglePoint?.toLowerCase() === 'true';
+
     const noYRange =
-      !this.heightInDegrees ||
-      +this.heightInDegrees === 0 ||
-      this.isSinglePoint;
+      !this.heightInDegrees || +this.heightInDegrees === 0 || isSinglePoint;
 
     const noXRange =
-      !this.widthInDegrees || +this.widthInDegrees === 0 || this.isSinglePoint;
+      !this.widthInDegrees || +this.widthInDegrees === 0 || isSinglePoint;
 
-    // This explicit === should not be necessary, but console logs show we go into the if clause unless we're explicit
-    if (noYRange === true) {
+    if (noYRange) {
       this.heightInDegrees = defaultRange;
-      this.minLatitude = this.minLatitude - defaultRange / 2;
+      this.minLatitude -= defaultRange / 2;
     }
-    if (noXRange === true) {
+    if (noXRange) {
       this.widthInDegrees = defaultRange;
-      this.minLongitude = this.minLongitude - defaultRange / 2;
+      this.minLongitude -= defaultRange / 2;
     }
 
     const imageHeight =
