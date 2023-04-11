@@ -72,7 +72,7 @@ public class Game implements Runnable {
 
         while (!done) {
             // Read messages from the game queue
-            var kv = redis.list(Event.class).blpop(Duration.ofSeconds(1), "hide-and-seek:game:"+ gameId);
+            var kv = redis.list(Event.class).blpop(Duration.ofSeconds(1), "hide-and-seek:game");
             if (kv != null) {
                 var event = kv.value;
                 if (event.gameId.equals(gameId)) {
@@ -138,7 +138,7 @@ public class Game implements Runnable {
                 Thread.currentThread().interrupt();
             }
             if (!done) {
-                this.redis.list(Event.TimesUpEvent.class).lpush("hide-and-seek:game:"+ gameId, new Event.TimesUpEvent(gameId));
+                this.redis.list(Event.TimesUpEvent.class).lpush("hide-and-seek:game", new Event.TimesUpEvent(gameId));
             }
         });
     }
