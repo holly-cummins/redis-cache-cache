@@ -11,10 +11,6 @@ describe('Seeker Path', () => {
       element = await fixture(html` <seeker-path></seeker-path>`);
     });
 
-    afterEach(() => {
-      window.fetch.restore(); // remove stub
-    });
-
     it('renders an svg', () => {
       const svg = element.shadowRoot.querySelector('svg');
       expect(svg).to.exist;
@@ -37,10 +33,6 @@ describe('Seeker Path', () => {
         .points="${data}"
         count="3"
       ></seeker-path>`);
-    });
-
-    afterEach(() => {
-      window.fetch.restore(); // remove stub
     });
 
     it('renders an svg', () => {
