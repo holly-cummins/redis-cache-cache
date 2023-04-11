@@ -1,16 +1,12 @@
 import { html } from 'lit';
 import { expect, fixture } from '@open-wc/testing';
-import '../../src/components/map-image.js';
+import {
+  imageMaxLatitude,
+  imageMaxLongitude,
+  imageMinLatitude,
+  imageMinLongitude,
+} from '../../src/components/map-image.js';
 import { CoordinateConverter } from '../../src/geometry/cooordinate-converter.js';
-
-// We have to hard code these here because exporting seems hard
-
-// This value needs to be hand-tuned
-const imageMinLatitude = 48.81;
-const imageMaxLatitude = 48.91;
-
-const imageMinLongitude = 2.22;
-const imageMaxLongitude = 2.45;
 
 const originalImageHeightInDegrees = imageMaxLatitude - imageMinLatitude;
 const originalImageWidthInDegrees = imageMaxLongitude - imageMinLongitude;

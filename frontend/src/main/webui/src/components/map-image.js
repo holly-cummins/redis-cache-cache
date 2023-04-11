@@ -2,11 +2,11 @@ import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
 
 // This value needs to be hand-tuned
-const imageMinLatitude = 48.81;
-const imageMaxLatitude = 48.91;
+export const imageMinLatitude = 48.81;
+export const imageMaxLatitude = 48.91;
 
-const imageMinLongitude = 2.22;
-const imageMaxLongitude = 2.45;
+export const imageMinLongitude = 2.22;
+export const imageMaxLongitude = 2.45;
 
 export class MapImage extends BaseElement {
   static styles = [
