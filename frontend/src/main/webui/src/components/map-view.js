@@ -102,6 +102,8 @@ class MapView extends BaseElement {
           <seeker-path
             count=${this.seeks?.length}
             .points="${this.seeks}"
+            height="${height}"
+            width="${width}"
           ></seeker-path>
           <map-image
             height="${height}"

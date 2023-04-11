@@ -22,11 +22,16 @@ class SeekerPath extends BaseElement {
 
   static get properties() {
     // The count is here to force a re-render when array contents change
-    return { points: { type: Array }, count: {} };
+    return { points: { type: Array }, count: {}, width: {}, height: {} };
   }
 
   render() {
-    return html` <svg class="test" viewbox="0 0 1000 1000">
+    return html` <svg
+      class="test"
+      viewbox="0 0 ${this.width} ${this.height}"
+      height="${this.height}px"
+      width="${this.width}px"
+    >
       ${Array.isArray(this.points) &&
       this.points?.map(entry => SeekerPath.plot(entry))}
     </svg>`;
