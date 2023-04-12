@@ -57,7 +57,7 @@ class AddPlaceButton extends BaseElement {
             );
           }}"
         >
-          Ajouter un lieu
+          Chercher un lieu
         </button>
       </div>
       </div>
