@@ -1,8 +1,10 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
-import { prependAt } from '../language/grammar-helper.js';
+import { Places } from '../language/places.js';
 
 class EventTicker extends BaseElement {
+  static places = new Places();
+
   static styles = [
     BaseElement.styles,
     css`
@@ -61,15 +63,17 @@ class EventTicker extends BaseElement {
   static format(event) {
     switch (event.kind) {
       case 'HIDER':
-        return html`Oh, ${event.hider} se cache ${prependAt(event)}.`;
+        return html`Oh, ${event.hider} se cache
+        ${this.formatPlace(event.place)}.`;
       case 'NEW_GAME':
         return html`Le jeu commence.`;
       case 'PLAYER_DISCOVERED': {
-        return html`Ah, ${event.seeker} a trouvé ${event.hider} à
-        ${event.place}.`;
+        return html`Ah, ${event.seeker} a trouvé ${event.hider}
+        ${this.formatPlace(event.place)}.`;
       }
       case 'SEEKER_MOVE': {
-        return html`Ah, ${event.seeker} est allé à ${event.destination}.`;
+        return html`Ah, ${event.seeker} est allé
+        ${this.formatPlace(event.destination)}.`;
       }
       case 'GAME_OVER': {
         const verb = event.seekerWon ? `a gagné` : `a perdu`;
@@ -79,6 +83,22 @@ class EventTicker extends BaseElement {
       default:
         return '';
     }
+  }
+
+  static formatPlace(place) {
+    const p = this.places.getPlace(place);
+    if (p?.isPlural === 'true' || p?.isPlural === true) {
+      return `aux ${place}`;
+    }
+
+    if (p?.name?.startsWith('Le')) {
+      return place.replace('Le', 'au');
+    }
+
+    if (p?.name?.startsWith('L')) {
+      return place.replace('L', 'à l');
+    }
+    return `au ${place}`;
   }
 
   connectedCallback() {
