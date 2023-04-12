@@ -29,7 +29,7 @@ class EventTicker extends BaseElement {
       li {
         text-align: left;
         font-family: Courier, monospace;
-        font-size: 14px;
+        font-size: large;
       }
     `,
   ];
