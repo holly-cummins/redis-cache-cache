@@ -82,7 +82,7 @@ public class SuperSeeker implements Runnable {
                         // Pick a random starting point
                         this.position = places.get(new Random().nextInt(places.size() - 1));
                         visited.add(this.position);
-                        redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game",
+                        redis.list(Event.SeekerAtPositionEvent.class).rpush("hide-and-seek:game",
                                 new Event.SeekerAtPositionEvent(game, this.position));
                         goToPlace(pickNext());
                     }
@@ -96,7 +96,7 @@ public class SuperSeeker implements Runnable {
                         if (game != null) {
                             this.position = event.as(Event.SeekerArrivedAtEvent.class).place;
                             visited.add(this.position);
-                            redis.list(Event.SeekerAtPositionEvent.class).lpush("hide-and-seek:game",
+                            redis.list(Event.SeekerAtPositionEvent.class).rpush("hide-and-seek:game",
                                     new Event.SeekerAtPositionEvent(game, this.position));
                             goToPlace(pickNext());
                         }
@@ -131,13 +131,13 @@ public class SuperSeeker implements Runnable {
         }
         var duration = (int) (next.distance / player.speed());
         LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, it will take %sms", player.name(), position, next.destination, next.distance, duration);
-        redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game",
+        redis.list(Event.SeekerMoveEvent.class).rpush("hide-and-seek:game",
                 new Event.SeekerMoveEvent(game, this.position, next.destination, duration, next.distance));
         Thread.ofVirtual().start(() -> {
             try {
                 Thread.sleep(duration);
                 if (game != null) {
-                    redis.list(Event.SeekerArrivedAtEvent.class).lpush(SEEKER_KEY, new Event.SeekerArrivedAtEvent(game, next.destination));
+                    redis.list(Event.SeekerArrivedAtEvent.class).rpush(SEEKER_KEY, new Event.SeekerArrivedAtEvent(game, next.destination));
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

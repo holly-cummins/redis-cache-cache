@@ -37,11 +37,9 @@ class EventTicker extends BaseElement {
       .player {
         font-weight: bold;
         font-family: Handlee, fantasy;
-        //background: #ffff00aa;
       }
 
       .place {
-        //background: #00ff00aa;
       }
     `,
   ];

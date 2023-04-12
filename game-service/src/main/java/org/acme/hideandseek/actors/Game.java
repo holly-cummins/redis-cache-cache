@@ -66,7 +66,7 @@ public class Game implements Runnable {
 
         // Send game started event to the seeker
         this.redis.list(Event.GameStartedEvent.class)
-                .lpush(SEEKER_KEY, new Event.GameStartedEvent(gameId, seeker));
+                .rpush(SEEKER_KEY, new Event.GameStartedEvent(gameId, seeker));
         this.events.publish(TOPIC_EVENTS,
                 GameEvent.newGame(gameId, seeker, hiders));
         initTimesUp();
@@ -101,7 +101,7 @@ public class Game implements Runnable {
         done = true;
         var duration = System.currentTimeMillis() - begin;
         // Send the "end" event to the seeker
-        redis.list(Event.GameEndedEvent.class).lpush(SEEKER_KEY,
+        redis.list(Event.GameEndedEvent.class).rpush(SEEKER_KEY,
                 new Event.GameEndedEvent(gameId));
 
         this.events.publish(TOPIC_EVENTS, GameEvent.gameOver(gameId, duration,
@@ -142,7 +142,7 @@ public class Game implements Runnable {
             }
             if (!done) {
                 this.redis.list(Event.TimesUpEvent.class)
-                        .lpush("hide-and-seek:game", new Event.TimesUpEvent(gameId));
+                        .rpush("hide-and-seek:game", new Event.TimesUpEvent(gameId));
             }
         });
     }

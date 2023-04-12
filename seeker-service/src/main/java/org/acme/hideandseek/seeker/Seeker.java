@@ -83,7 +83,7 @@ public class Seeker implements Runnable {
                             this.position = ev.place;
                             var positionEvent = new Event.SeekerAtPositionEvent(game, this.position);
                             redis.list(Event.SeekerAtPositionEvent.class)
-                                    .lpush("hide-and-seek:game", positionEvent);
+                                    .rpush("hide-and-seek:game", positionEvent);
                             if (placesToVisit.hasNext()) {
                                 goToPlace(placesToVisit.next());
                             }
@@ -103,7 +103,7 @@ public class Seeker implements Runnable {
                 "it will take %sms", player.name(), position, destination, distance.orElse(0.0), duration);
 
         // Send the move event
-        redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game",
+        redis.list(Event.SeekerMoveEvent.class).rpush("hide-and-seek:game",
                 new Event.SeekerMoveEvent(game, this.position, destination, duration,
                         distance.orElse(0.0)));
 
@@ -112,7 +112,7 @@ public class Seeker implements Runnable {
                 Thread.sleep(duration);
                 if (game != null) {
                     // Send the moved event
-                    redis.list(Event.SeekerArrivedAtEvent.class).lpush(SEEKER_KEY,
+                    redis.list(Event.SeekerArrivedAtEvent.class).rpush(SEEKER_KEY,
                             new Event.SeekerArrivedAtEvent(game, destination));
                 }
             } catch (InterruptedException e) {
