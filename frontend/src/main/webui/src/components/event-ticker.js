@@ -71,10 +71,12 @@ class EventTicker extends BaseElement {
   }
 
   static format(event) {
+    const f = this.formatPlace(event.place);
+    const span = html`<span class="player">${event.hider}</span>`;
+
     switch (event.kind) {
       case 'HIDER':
-        return html`Oh, <span class="player">${event.hider}</span> se cache
-          ${this.formatPlace(event.place)}.`;
+        return html` Oh, ${span} se cache ${f}.`;
       case 'NEW_GAME':
         return html`Le jeu commence.`;
       case 'PLAYER_DISCOVERED': {
@@ -98,12 +100,17 @@ class EventTicker extends BaseElement {
   }
 
   static formatPlace(place) {
+    console.log('WILL FORMAT', place);
     const p = this.places.getPlace(place);
-    if (p.name.startsWith('Le ')) {
+    if (!p) {
+      return html`au <span class="place">${place}</span>`;
+    }
+
+    if (p?.name.startsWith('Le ')) {
       return html`${p.prefix}
         <span class="place">${p.name.replace('Le ', '')}</span>`;
     }
-    if (p.name.startsWith('Les ')) {
+    if (p?.name.startsWith('Les ')) {
       return html`${p.prefix}
         <span class="place">${p.name.replace('Les ', '')}</span>`;
     }
