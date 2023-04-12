@@ -50,7 +50,7 @@ class SeekerPath extends BaseElement {
       <path
         fill="none"
         stroke-width="3px"
-        stroke="#D3D3D3"
+        stroke="#D0D0D0"
         d="M${point.from[0]} ${point.from[1]}, ${point.to[0]} ${point.to[1]}"
       ></path>
       <circle

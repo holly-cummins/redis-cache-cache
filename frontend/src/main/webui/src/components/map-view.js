@@ -38,6 +38,7 @@ class MapView extends BaseElement {
 
       .place {
         position: absolute;
+        z-index: 18;
       }
 
       .seeker {
@@ -53,7 +54,7 @@ class MapView extends BaseElement {
       }
 
       .visited {
-        color: grey;
+        color: silver;
       }
 
       .normal {
