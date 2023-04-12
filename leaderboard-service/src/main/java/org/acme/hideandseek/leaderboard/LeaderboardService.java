@@ -19,6 +19,7 @@ public class LeaderboardService {
 
     public LeaderboardService(RedisDataSource redis) {
         this.redis = redis;
+        // Receive events
         this.redis.pubsub(GameEvent.class)
                 .subscribe(TOPIC_EVENTS, event -> {
                     if (event.kind == GameEvent.Kind.GAME_OVER) {
@@ -27,18 +28,21 @@ public class LeaderboardService {
                 });
     }
 
-    private void updateScore(GameEvent event) {
+    private void increment(String player, int score) {
+        // Use a sorted list to store the scores
+        redis.sortedSet(String.class).zincrby(KEY, score, player);
+    }
+
+    private synchronized void updateScore(GameEvent event) {
         // seeker = number of found players -1 (the seeker)
         increment(event.seeker, event.hiders.keySet().size() - event.nonDiscoveredPlayers.orElse(0));
         stream.onNext(getLeaderboard());
     }
 
-    private void increment(String player, int score) {
-        redis.sortedSet(String.class).zincrby(KEY, score, player);
-    }
-
     public List<ScoredValue<String>> getLeaderboard() {
-        return redis.sortedSet(String.class).zrangeWithScores(KEY, 0, -1, new ZRangeArgs().rev());
+        // Get the sorted set (reverse order)
+        return redis.sortedSet(String.class)
+                .zrangeWithScores(KEY, 0, -1, new ZRangeArgs().rev());
     }
 
     private final BroadcastProcessor<List<ScoredValue<String>>> stream = BroadcastProcessor.create();
