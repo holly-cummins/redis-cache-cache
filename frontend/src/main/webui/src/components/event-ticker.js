@@ -65,11 +65,11 @@ class EventTicker extends BaseElement {
       case 'NEW_GAME':
         return html`Le jeu commence.`;
       case 'PLAYER_DISCOVERED': {
-        return html`Ah, ${event.seeker} a trouvé ${event.hider} a
+        return html`Ah, ${event.seeker} a trouvé ${event.hider} à
         ${event.place}.`;
       }
       case 'SEEKER_MOVE': {
-        return html`Ah, ${event.seeker} est allé a ${event.destination}.`;
+        return html`Ah, ${event.seeker} est allé à ${event.destination}.`;
       }
       case 'GAME_OVER': {
         const verb = event.seekerWon ? `a gagné` : `a perdu`;

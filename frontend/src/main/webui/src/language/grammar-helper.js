@@ -8,7 +8,7 @@ export function prependAt({ place, isPlural }) {
   }
 
   if (place?.startsWith('L')) {
-    return place.replace('L', 'a l');
+    return place.replace('L', 'à l');
   }
   return `au ${place}`;
 }
