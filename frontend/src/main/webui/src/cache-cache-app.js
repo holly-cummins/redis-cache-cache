@@ -31,6 +31,7 @@ class CacheCacheApp extends LitElement {
     .dashboard {
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .row {

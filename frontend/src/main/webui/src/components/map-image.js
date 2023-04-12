@@ -14,7 +14,6 @@ export class MapImage extends BaseElement {
     css`
       .backgroundmap {
         position: relative;
-        overflow: hidden;
         margin: 0;
         padding: 0;
       }
