@@ -8,8 +8,8 @@ class Leaderboard extends BaseElement {
       .leaderboard {
         display: flex;
         flex-direction: column;
-        padding: 1rem;
-        margin: 1rem;
+        padding: 0.5rem;
+        margin: 0.5rem;
         width: 300px;
         border: 1px lightgray solid;
         border-radius: 5px;
@@ -18,6 +18,11 @@ class Leaderboard extends BaseElement {
       }
 
       table {
+      }
+
+      h2 {
+        padding: 0;
+        margin: 0.3rem;
       }
 
       td {

@@ -37,6 +37,7 @@ class CacheCacheApp extends LitElement {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      flex-wrap: wrap;
     }
 
     .logo {
@@ -74,13 +75,13 @@ class CacheCacheApp extends LitElement {
         <div class="row">
           <add-place-button></add-place-button>
           <add-all-places-button></add-all-places-button>
+          <start-game-button></start-game-button>
+          <leader-board></leader-board>
         </div>
-        <start-game-button></start-game-button>
         <div class="dashboard">
           <div class="row">
             <event-ticker></event-ticker>
             <map-view></map-view>
-            <leader-board></leader-board>
           </div>
         </div>
       </main>
