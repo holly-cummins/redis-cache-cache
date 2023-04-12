@@ -51,10 +51,11 @@ public class SuperSeeker implements Runnable {
                             .withDistance()
                             .withCoordinates());
 
+            // Build a graph
             for (GeoValue<String> geoValue : list) {
                 this.redis.graph().graphQuery("hide-and-seek:graph", """
-                                        MERGE (:Place {name:'%s'})-[:travel{distance:%f}]->(:Place {name:'%s'})
-                                        """.formatted(p, geoValue.distance.orElse(0.0),
+                  MERGE (:Place {name:'%s'})-[:travel{distance:%f}]->(:Place {name:'%s'})
+                  """.formatted(p, geoValue.distance.orElse(0.0),
                         geoValue.member)
                 );
 
@@ -109,6 +110,7 @@ public class SuperSeeker implements Runnable {
     }
 
     private NextHop pickNext() {
+        // Pick the node with the shortest distance.
         String v = visited.stream().map(s -> "'" + s + "'").collect(Collectors.joining(", "));
         String q = QUERY.formatted(this.position, "[" + v + "]");
         LOGGER.infof("Seeker query: %s", q);

@@ -40,7 +40,7 @@ class PlayerControllerTest {
 
     @Test
     void createAndDelete() {
-        Player test = new Player(null, "test", "", 99);
+        Player test = new Player(null, "test", 99);
         Player added = with().body(test)
                 .header("Content-Type", "application/json")
                 .post("/")
@@ -80,7 +80,7 @@ class PlayerControllerTest {
                 .then().statusCode(404);
 
         // Cannot create if id is already there.
-        Player bad = new Player("a5b6e9d7-8c6d-4a5d-9b7f-1a7d5a8f8e9e", "bad", "", 99);
+        Player bad = new Player("a5b6e9d7-8c6d-4a5d-9b7f-1a7d5a8f8e9e", "bad", 99);
         with().body(bad)
                 .header("Content-Type", "application/json")
                 .post("/")
@@ -91,14 +91,14 @@ class PlayerControllerTest {
 
     @Test
     void update() {
-        Player test = new Player(null, "test", "", 20);
+        Player test = new Player(null, "test", 20);
         var added = with().body(test)
                 .header("Content-Type", "application/json")
                 .post("/")
                 .then().statusCode(201)
                 .extract().as(Player.class);
 
-        Player updated = new Player(added.id(), "test", "", 98);
+        Player updated = new Player(added.id(), "test", 98);
         var stored = with().body(updated)
                 .header("Content-Type", "application/json")
                 .put("/" + added.id())
@@ -110,7 +110,7 @@ class PlayerControllerTest {
         delete("/" + added.id()).then().statusCode(204);
 
         // Update missing
-        Player missing = new Player("missing", "missing", "", 20);
+        Player missing = new Player("missing", "missing", 20);
         with().body(missing)
                 .header("Content-Type", "application/json")
                 .put("/missing")

@@ -21,6 +21,7 @@ public class PlayerRepository {
     }
 
     List<Player> getAll() {
+        // Get all values from the hash
         return hash.hvals(PLAYER_KEY);
     }
 
@@ -38,6 +39,7 @@ public class PlayerRepository {
         }
         var id = generator.generate();
         var persisted = player.withId(id);
+        // Add a field/value to the hash
         hash.hset(PLAYER_KEY, id, persisted);
         return persisted;
     }
@@ -45,17 +47,18 @@ public class PlayerRepository {
     boolean update(String id, Player player) {
         // Check-And-Set pattern
         return !redis.withTransaction(
-                        // Before the transaction, get the existing player
-                        con -> con.hash(Player.class).hget(PLAYER_KEY, id),
-                        // In the transaction, update the player if it exists
-                        (found, tx) -> {
-                            if (found == null) {
-                                tx.discard();
-                            } else {
-                                Player copy = new Player(id, player.name(), player.picture(), player.speed());
-                                tx.hash(Player.class).hset(PLAYER_KEY, id, copy);
-                            }
-                        }, PLAYER_KEY) // Watch the key, so any write would discard the transaction
-                .discarded();
+                // Before the transaction, get the existing player
+                con -> con.hash(Player.class).hget(PLAYER_KEY, id),
+                // In the transaction, update the player if it exists
+                (found, tx) -> {
+                    if (found == null) {
+                        tx.discard();
+                    } else {
+                        var copy = new Player(id, player.name(), player.speed());
+                        tx.hash(Player.class).hset(PLAYER_KEY, id, copy);
+                    }
+                },
+                PLAYER_KEY) // Watch the key, so any write would discard the transaction
+        .discarded();
     }
 }

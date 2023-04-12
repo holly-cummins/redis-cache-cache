@@ -47,14 +47,13 @@ public class Game implements Runnable {
         // Pick random seeker
         int index = random.nextInt(copy.size() - 1);
         this.seeker = copy.get(index);
-        LOGGER.infof("The seeker is %s", this.seeker);
+
         // Others are going to hide
         copy.remove(this.seeker);
         for (Player player : copy) {
             Hider hider = new Hider(player, places);
             this.hiders.add(hider);
         }
-        LOGGER.infof("%d hiders", this.hiders.size());
     }
 
     public String start() {
@@ -66,20 +65,25 @@ public class Game implements Runnable {
         begin = System.currentTimeMillis();
 
         // Send game started event to the seeker
-        this.redis.list(Event.GameStartedEvent.class).lpush(SEEKER_KEY, new Event.GameStartedEvent(gameId, seeker));
-        this.events.publish(TOPIC_EVENTS, GameEvent.newGame(gameId, seeker, hiders));
+        this.redis.list(Event.GameStartedEvent.class)
+                .lpush(SEEKER_KEY, new Event.GameStartedEvent(gameId, seeker));
+        this.events.publish(TOPIC_EVENTS,
+                GameEvent.newGame(gameId, seeker, hiders));
         initTimesUp();
 
         while (!done) {
-            // Read messages from the game queue
-            var kv = redis.list(Event.class).blpop(Duration.ofSeconds(1), "hide-and-seek:game");
+            // Actor-Style: Read messages from the game queue
+            var kv = redis.list(Event.class)
+                    .blpop(Duration.ofSeconds(1), "hide-and-seek:game");
             if (kv != null) {
                 var event = kv.value;
                 if (event.gameId.equals(gameId)) {
                     switch (event.kind) {
                         case TIMES_UP -> onGameEnd();
-                        case SEEKER_AT_POSITION -> seekerAtPlace(event.as(Event.SeekerAtPositionEvent.class).place);
-                        case SEEKER_MOVE -> onSeekerMove(event.as(Event.SeekerMoveEvent.class));
+                        case SEEKER_AT_POSITION -> seekerAtPlace(event
+                                .as(Event.SeekerAtPositionEvent.class).place);
+                        case SEEKER_MOVE -> onSeekerMove(event
+                                .as(Event.SeekerMoveEvent.class));
                     }
                 }
             }
@@ -87,29 +91,28 @@ public class Game implements Runnable {
     }
 
     private void onSeekerMove(Event.SeekerMoveEvent event) {
-        this.events.publish(TOPIC_EVENTS, GameEvent.seekerMove(gameId, seeker, event.origin, event.destination, event.distance, event.duration));
+        // Publish changes to the frontend
+        this.events.publish(TOPIC_EVENTS,
+                GameEvent.seekerMove(gameId, seeker, event.origin,
+                        event.destination, event.distance, event.duration));
     }
 
     public void onGameEnd() {
         done = true;
         var duration = System.currentTimeMillis() - begin;
         // Send the "end" event to the seeker
-        redis.list(Event.GameEndedEvent.class).lpush(SEEKER_KEY, new Event.GameEndedEvent(gameId));
+        redis.list(Event.GameEndedEvent.class).lpush(SEEKER_KEY,
+                new Event.GameEndedEvent(gameId));
 
-        var notDiscovered = hiders.stream().filter(hider -> !hider.hasBeenDiscovered()).toList();
-        if (notDiscovered.isEmpty()) {
-            LOGGER.info("The seeker has won!");
-        } else {
-            LOGGER.infof("The seeker didn't find everyone, %d players not discovered", notDiscovered.size());
-        }
-        this.events.publish(TOPIC_EVENTS, GameEvent.gameOver(gameId, duration, seeker, hiders));
+        this.events.publish(TOPIC_EVENTS, GameEvent.gameOver(gameId, duration,
+                seeker, hiders));
     }
 
     public void seekerAtPlace(String place) {
         for (Hider hider : hiders) {
             if (hider.getPosition().equals(place)) {
-                LOGGER.infof("%s (seeker) discovered %s at %s", seeker.name(), hider.player.name(), place);
-                this.events.publish(TOPIC_EVENTS, GameEvent.hiderDiscovered(gameId, seeker, hider, place));
+                this.events.publish(TOPIC_EVENTS,
+                        GameEvent.hiderDiscovered(gameId, seeker, hider, place));
                 hider.discovered();
             }
         }
@@ -138,7 +141,8 @@ public class Game implements Runnable {
                 Thread.currentThread().interrupt();
             }
             if (!done) {
-                this.redis.list(Event.TimesUpEvent.class).lpush("hide-and-seek:game", new Event.TimesUpEvent(gameId));
+                this.redis.list(Event.TimesUpEvent.class)
+                        .lpush("hide-and-seek:game", new Event.TimesUpEvent(gameId));
             }
         });
     }

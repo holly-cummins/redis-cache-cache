@@ -47,7 +47,9 @@ public class Seeker implements Runnable {
 
     public void run() {
         while (true) {
-            KeyValue<String, Event> kv = queues.blpop(Duration.ofSeconds(1), SEEKER_KEY);
+            // Actor-Style
+            KeyValue<String, Event> kv
+                    = queues.blpop(Duration.ofSeconds(1), SEEKER_KEY);
             if (kv != null) {
                 var event = kv.value;
                 switch (event.kind) {
@@ -93,16 +95,23 @@ public class Seeker implements Runnable {
     }
 
     private void goToPlace(String destination) {
-        var distance = redis.geo(String.class).geodist("hide-and-seek:geo", position, destination, GeoUnit.M);
+        // Compute the distance between the current position and the picked destination
+        var distance = redis.geo(String.class)
+                .geodist("hide-and-seek:geo", position, destination, GeoUnit.M);
         var duration = (int) (distance.orElse(0.0) / player.speed());
         LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, " +
                 "it will take %sms", player.name(), position, destination, distance.orElse(0.0), duration);
+
+        // Send the move event
         redis.list(Event.SeekerMoveEvent.class).lpush("hide-and-seek:game",
-                new Event.SeekerMoveEvent(game, this.position, destination, duration, distance.orElse(0.0)));
+                new Event.SeekerMoveEvent(game, this.position, destination, duration,
+                        distance.orElse(0.0)));
+
         Thread.ofVirtual().start(() -> {
             try {
                 Thread.sleep(duration);
                 if (game != null) {
+                    // Send the moved event
                     redis.list(Event.SeekerArrivedAtEvent.class).lpush(SEEKER_KEY,
                             new Event.SeekerArrivedAtEvent(game, destination));
                 }

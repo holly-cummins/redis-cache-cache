@@ -32,12 +32,14 @@ public class GameController {
         this.players = players;
         this.places = places;
         this.redis = redis;
-        this.events = reactiveRedis.pubsub(GameEvent.class).subscribe("hide-and-seek/events");
+        this.events = reactiveRedis.pubsub(GameEvent.class)
+                .subscribe("hide-and-seek/events");
     }
 
     @PostMapping("/games")
     public String start() {
-        Game game = new Game(players.getAllPlayers(), places.getPlaceNames(), redis, maxGameDuration);
+        Game game = new Game(players.getAllPlayers(), places.getPlaceNames(),
+                redis, maxGameDuration);
         return game.start();
     }
 

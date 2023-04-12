@@ -8,6 +8,7 @@ package org.acme.hideandseek.places;
  * @param description the description
  * @param coordinates the coordinate (lat:long)
  */
-public record Place(String key, String name, String prefix, String description, String coordinates) {
+public record Place(String key, String name, String prefix,
+                    String description, String coordinates) {
 
 }

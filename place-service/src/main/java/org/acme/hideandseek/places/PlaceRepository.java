@@ -18,9 +18,12 @@ public class PlaceRepository {
     }
 
     private void initGeoSpatialData() {
+        // Iterate over keys with a pattern
         for (String key : redis.key().keys("hide-and-seek:places:*")) {
+            // Read every value as JSON
             Place place = redis.json().jsonGet(key, Place.class);
             String[] pos = place.coordinates().split(",");
+            // Add the item to a list of geo indices
             redis.geo(String.class)
                     .geoadd("hide-and-seek:geo",
                             Double.parseDouble(pos[0]), Double.parseDouble(pos[1]),
@@ -35,6 +38,7 @@ public class PlaceRepository {
     }
 
     public List<Place> search(String query) {
+        // Use the index to find places
         return redis.search().ftSearch("hide-and-seek:places-index", query)
                 .documents()
                 .stream()
