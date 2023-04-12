@@ -1,5 +1,6 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
+import { prependAt } from '../language/grammar-helper.js';
 
 class EventTicker extends BaseElement {
   static styles = [
@@ -60,7 +61,7 @@ class EventTicker extends BaseElement {
   static format(event) {
     switch (event.kind) {
       case 'HIDER':
-        return html`Oh, ${event.hider} se cache au ${event.place}.`;
+        return html`Oh, ${event.hider} se cache ${prependAt(event)}.`;
       case 'NEW_GAME':
         return html`Le jeu commence.`;
       case 'PLAYER_DISCOVERED': {
