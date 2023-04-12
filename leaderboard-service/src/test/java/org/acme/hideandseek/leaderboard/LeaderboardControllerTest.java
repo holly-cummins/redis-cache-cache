@@ -115,6 +115,8 @@ class LeaderboardControllerTest {
         });
         sse.open();
 
+        await().until(sse::isOpen);
+
         var event = new GameEvent();
         event.kind = GameEvent.Kind.GAME_OVER;
         event.seeker = "clement";
