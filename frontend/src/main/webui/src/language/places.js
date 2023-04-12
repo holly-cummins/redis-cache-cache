@@ -4,7 +4,7 @@ export class Places {
   initialized = false;
 
   constructor() {
-    fetch('http://localhost:8092')
+    fetch('http://localhost:8092/places')
       .then(resp => resp.json())
       .then(array => {
         this.places = array;
@@ -17,6 +17,9 @@ export class Places {
   }
 
   getPlace(name) {
-    return this.places.find(s => s === name);
+    return this.places.find(s => {
+      console.log('looking for ', name, s);
+      return s.name === name;
+    });
   }
 }

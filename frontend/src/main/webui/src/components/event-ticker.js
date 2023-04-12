@@ -13,7 +13,7 @@ class EventTicker extends BaseElement {
         padding: 0.5rem;
         overflow: scroll;
         width: 450px;
-        max-height: 150px;
+        max-height: 250px;
         position: absolute;
         z-index: 2;
         border: 1px lightgray solid;
@@ -32,6 +32,16 @@ class EventTicker extends BaseElement {
         text-align: left;
         font-family: Courier, monospace;
         font-size: large;
+      }
+
+      .player {
+        font-weight: bold;
+        font-family: Handlee, fantasy;
+        //background: #ffff00aa;
+      }
+
+      .place {
+        //background: #00ff00aa;
       }
     `,
   ];
@@ -63,17 +73,19 @@ class EventTicker extends BaseElement {
   static format(event) {
     switch (event.kind) {
       case 'HIDER':
-        return html`Oh, ${event.hider} se cache
-        ${this.formatPlace(event.place)}.`;
+        return html`Oh, <span class="player">${event.hider}</span> se cache
+          ${this.formatPlace(event.place)}.`;
       case 'NEW_GAME':
         return html`Le jeu commence.`;
       case 'PLAYER_DISCOVERED': {
-        return html`Ah, ${event.seeker} a trouvé ${event.hider}
-        ${this.formatPlace(event.place)}.`;
+        return html`Ah, <span class="player">${event.seeker}</span> a trouvé
+          <span class="player">${event.hider}</span> ${this.formatPlace(
+            event.place
+          )}.`;
       }
       case 'SEEKER_MOVE': {
-        return html`Ah, ${event.seeker} est allé
-        ${this.formatPlace(event.destination)}.`;
+        return html`Ah, <span class="player">${event.seeker}</span> est allé
+          ${this.formatPlace(event.destination)}.`;
       }
       case 'GAME_OVER': {
         const verb = event.seekerWon ? `a gagné` : `a perdu`;
@@ -87,18 +99,18 @@ class EventTicker extends BaseElement {
 
   static formatPlace(place) {
     const p = this.places.getPlace(place);
-    if (p?.isPlural === 'true' || p?.isPlural === true) {
-      return `aux ${place}`;
+    if (p.name.startsWith('Le ')) {
+      return html`${p.prefix}
+        <span class="place">${p.name.replace('Le ', '')}</span>`;
     }
-
-    if (p?.name?.startsWith('Le')) {
-      return place.replace('Le', 'au');
+    if (p.name.startsWith('Les ')) {
+      return html`${p.prefix}
+        <span class="place">${p.name.replace('Les ', '')}</span>`;
     }
-
-    if (p?.name?.startsWith('L')) {
-      return place.replace('L', 'à l');
+    if (p.prefix.endsWith('’')) {
+      return html`${p.prefix}<span class="place">${p.name}</span>`;
     }
-    return `au ${place}`;
+    return html`${p.prefix} <span class="place">${p.name}</span>`;
   }
 
   connectedCallback() {
