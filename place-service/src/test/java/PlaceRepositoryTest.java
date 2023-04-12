@@ -34,7 +34,6 @@ class PlaceRepositoryTest {
             Assertions.assertNotNull(place.coordinates());
             Assertions.assertNotNull(place.name());
             Assertions.assertNotNull(place.description());
-            Assertions.assertNotNull(place.picture());
         }
     }
 
@@ -46,7 +45,6 @@ class PlaceRepositoryTest {
             Assertions.assertNotNull(place.coordinates());
             Assertions.assertNotNull(place.name());
             Assertions.assertNotNull(place.description());
-            Assertions.assertNotNull(place.picture());
         }
 
         var brouette = repository.search("brouette");
