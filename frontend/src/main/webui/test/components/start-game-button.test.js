@@ -21,7 +21,7 @@ describe('Start Game Button', () => {
   it('renders a button', () => {
     const button = element.shadowRoot.querySelector('button');
     expect(button).to.exist;
-    expect(button.textContent).to.contain('Démarrer un jeu');
+    expect(button.textContent).to.contain('Start game');
   });
 
   it('sends a post request on click', () => {

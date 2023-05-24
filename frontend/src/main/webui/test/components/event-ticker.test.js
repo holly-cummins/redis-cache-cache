@@ -11,9 +11,7 @@ describe('Event ticker', () => {
     });
 
     it('renders a placeholder', () => {
-      expect(element.shadowRoot.textContent).to.contain(
-        "Rien n'est encore arrivé ..."
-      );
+      expect(element.shadowRoot.textContent).to.contain('Nothing happened yet');
     });
 
     it('passes the a11y audit', async () => {
@@ -67,9 +65,7 @@ describe('Event ticker', () => {
       const ul = element.shadowRoot.querySelector('ul');
       expect(ul).to.exist;
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain(
-        'first hider se cache au Centre Pompidou'
-      );
+      expect(li.textContent).to.contain('first hider hides in Centre Pompidou');
     });
 
     it('prepends subsequent events', async () => {
@@ -85,9 +81,7 @@ describe('Event ticker', () => {
       expect(ul).to.exist;
       // The selector will select the first matching item, which in this case is what we want, because we want descending order
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain(
-        'second hider se cache au Eiffel Tower'
-      );
+      expect(li.textContent).to.contain('second hider hides in Eiffel Tower');
     });
 
     it('renders game start events', async () => {

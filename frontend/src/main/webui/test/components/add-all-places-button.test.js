@@ -23,7 +23,7 @@ describe('Add all places Button', () => {
   it('renders a button', () => {
     const button = element.shadowRoot.querySelector('button');
     expect(button).to.exist;
-    expect(button.textContent).to.contain('lieus');
+    expect(button.textContent).to.contain('places');
   });
 
   it('sends an event on click', () => {

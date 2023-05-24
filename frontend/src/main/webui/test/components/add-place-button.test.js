@@ -22,7 +22,7 @@ describe('Add place Button', () => {
   it('renders a button', () => {
     const button = element.shadowRoot.querySelector('button');
     expect(button).to.exist;
-    expect(button.textContent).to.contain('lieu');
+    expect(button.textContent).to.contain('place');
   });
 
   it('sends an event on click', () => {
@@ -36,7 +36,7 @@ describe('Add place Button', () => {
   it('renders a text field', () => {
     const input = element.shadowRoot.querySelector('input');
     expect(input).to.exist;
-    expect(input.placeholder).to.contain('Lieu');
+    expect(input.placeholder).to.contain('Place');
   });
 
   it('sends the place name on click', async () => {
