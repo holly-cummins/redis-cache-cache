@@ -32,8 +32,10 @@ public class GameController {
         this.players = players;
         this.places = places;
         this.redis = redis;
-        this.events = reactiveRedis.pubsub(GameEvent.class)
-                .subscribe("hide-and-seek/events");
+        this.events = Multi.createBy().merging().streams(
+                reactiveRedis.pubsub(GameEvent.class).subscribe("hide-and-seek/events"),
+                Multi.createFrom().ticks().every(Duration.ofSeconds(10)).map(x -> GameEvent.EMPTY)
+        );
     }
 
     @PostMapping("/games")

@@ -1,5 +1,6 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
+import { Discovery } from '../discovery/discovery.js';
 
 class Leaderboard extends BaseElement {
   static styles = [
@@ -36,13 +37,15 @@ class Leaderboard extends BaseElement {
     `,
   ];
 
+  discovery = new Discovery();
+
   render() {
     if (!this.data) {
       return html` <h2>Loading...</h2> `;
     }
     return html`
       <div class="leaderboard">
-        <h2>Les scores</h2>
+        <h2>Scoreboard</h2>
         <table>
           ${this.data.map(
             entry =>
@@ -76,7 +79,9 @@ class Leaderboard extends BaseElement {
 
   async fetchData() {
     try {
-      const response = await fetch('http://localhost:8093/leaderboard/');
+      const response = await this.discovery
+        .resolve('leaderboard', window.location.href)
+        .then(location => fetch(`${location}/leaderboard/`));
       this.data = await response?.json();
     } catch (e) {
       console.warn('Could not fetch leaderboard information.');
@@ -85,15 +90,21 @@ class Leaderboard extends BaseElement {
 
   onServerUpdate = event => {
     // Leaving the log in so we can see how often events are coming in
-    console.debug('Updating data:', event);
-    this.data = JSON.parse(event?.data);
+    console.log('board - Updating data:', event);
+    const d = JSON.parse(event?.data);
+    if (d.length === 0) {
+      // ping frame
+      return;
+    }
+    this.data = d;
   };
 
   async openConnection() {
     // Server side events
-    this.eventSource = new EventSource(
-      'http://localhost:8093/leaderboard/events'
-    );
+    this.eventSource = await this.discovery
+      .resolve('leaderboard', window.location.href)
+      .then(location => new EventSource(`${location}/leaderboard/events`));
+
     this.eventSource.onmessage = this.onServerUpdate;
     this.eventSource.onopen = function () {
       console.log('Connected to leaderboard.');

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -28,6 +30,9 @@ public class LeaderboardController {
     @Produces(MediaType.SERVER_SENT_EVENTS)
     @Blocking
     public Multi<List<ScoredValue<String>>> getStream() {
-        return this.leaderboard.getLeaderboardStream();
+        return Multi.createBy().merging().streams(this.leaderboard.getLeaderboardStream(),
+                Multi.createFrom().ticks().every(Duration.ofSeconds(10))
+                        .map(x -> List.of())
+        );
     }
 }

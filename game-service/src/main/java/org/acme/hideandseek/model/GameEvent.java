@@ -16,6 +16,9 @@ import static org.acme.hideandseek.model.GameEvent.Kind.PLAYER_DISCOVERED;
 import static org.acme.hideandseek.model.GameEvent.Kind.SEEKER_MOVE;
 
 public class GameEvent {
+
+    public static final GameEvent EMPTY = new GameEvent(Kind.PING, null, null, null, null, null, null, -1, -1, -1);
+
     public final Kind kind;
     public final String gameId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -111,6 +114,8 @@ public class GameEvent {
         NEW_GAME,
         GAME_OVER,
         PLAYER_DISCOVERED,
-        SEEKER_MOVE
+        SEEKER_MOVE,
+
+        PING,
     }
 }

@@ -42,7 +42,7 @@ class AddPlaceButton extends BaseElement {
       <div>
         <input
           type="text"
-          placeholder="Lieu"
+          placeholder="Place"
           .value="${this.place}"
           @change="${this.onInputChange}"
         />
@@ -57,7 +57,7 @@ class AddPlaceButton extends BaseElement {
             );
           }}"
         >
-          Chercher un lieu
+          Find a place
         </button>
       </div>
       </div>

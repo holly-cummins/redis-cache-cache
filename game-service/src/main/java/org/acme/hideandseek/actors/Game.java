@@ -88,6 +88,8 @@ public class Game implements Runnable {
                 }
             }
         }
+
+
     }
 
     private void onSeekerMove(Event.SeekerMoveEvent event) {

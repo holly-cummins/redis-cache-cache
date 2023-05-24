@@ -1,11 +1,6 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
-
-const fetchData = async () => {
-  await fetch('http://localhost:8091/games', {
-    method: 'POST',
-  });
-};
+import { Discovery } from '../discovery/discovery.js';
 
 class StartGameButton extends BaseElement {
   static styles = [
@@ -48,10 +43,18 @@ class StartGameButton extends BaseElement {
     `,
   ];
 
+  discovery = new Discovery();
+
   render() {
-    return html`
-      <button @click="${fetchData}">Démarrer un jeu de cache-cache</button>
-    `;
+    return html` <button @click="${this.fetchData}">Start game</button> `;
+  }
+
+  async fetchData() {
+    await this.discovery.resolve('game', window.location.href).then(location =>
+      fetch(`${location}/games`, {
+        method: 'POST',
+      })
+    );
   }
 }
 

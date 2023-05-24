@@ -51,7 +51,7 @@ export class AddAllPlacesButton extends BaseElement {
           );
         }}"
       >
-        Ajouter tout les lieus
+        Add all places
       </button>
     `;
   }

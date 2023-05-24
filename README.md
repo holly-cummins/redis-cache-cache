@@ -89,3 +89,6 @@ So pick one:
 3. Monitoring event stream `http :8094/monitoring`
 
 
+## Kubernetes / Openshift
+
+Check [./kubernetes/README.md](the Kubernetes README file)

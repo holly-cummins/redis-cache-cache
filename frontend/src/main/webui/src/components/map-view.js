@@ -3,6 +3,7 @@ import { BaseElement } from './base-element.js';
 import './map-image.js';
 import './seeker-path.js';
 import { CoordinateConverter } from '../geometry/cooordinate-converter.js';
+import { Discovery } from '../discovery/discovery.js';
 
 // Ideally we wouldn't hard-code this, but we need to know it at render-time to do calculations; reading our own values at
 // render time is not reliable because we haven't finished rendering
@@ -91,6 +92,8 @@ class MapView extends BaseElement {
     `,
   ];
 
+  discovery = new Discovery();
+
   static get properties() {
     return {
       places: {},
@@ -110,7 +113,7 @@ class MapView extends BaseElement {
 
   render() {
     if (!this.places) {
-      return html` <h2>Aucun lieu n'a été ajouté</h2> `;
+      return html` <h2>No places were added</h2> `;
     }
     return html`
       <div class="outer">
@@ -152,7 +155,8 @@ class MapView extends BaseElement {
 
   fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:8092/places/');
+      const loc = await this.discovery.resolve('place', window.location.href);
+      const response = await fetch(`${loc}/places/`);
       this.places = await response?.json();
 
       this.coordinateConverter = new CoordinateConverter({
@@ -169,17 +173,17 @@ class MapView extends BaseElement {
   queryData = async e => {
     const name = e.detail?.place;
     try {
-      const response = await fetch(
-        `http://localhost:8092/places/search?query=${name}`
-      );
+      const response = await this.discovery
+        .resolve('place', window.location.href)
+        .then(location => fetch(`${location}/places/search?query=${name}`));
       const newPlaces = await response?.json();
       if (response.status === 200) {
         if (newPlaces) {
-          const concattedPlaces = newPlaces.concat(this.places || []);
+          const concatenatedPlaces = newPlaces.concat(this.places || []);
           // Strip places with the same name
-          this.places = concattedPlaces.filter(
+          this.places = concatenatedPlaces.filter(
             (element, index) =>
-              concattedPlaces.findIndex(
+              concatenatedPlaces.findIndex(
                 secondElement => element.name === secondElement.name
               ) === index
           );
@@ -217,20 +221,25 @@ class MapView extends BaseElement {
   onServerUpdate = event => {
     if (!this.positions) this.positions = {};
     const parsedEvent = JSON.parse(event?.data);
+    if (parsedEvent.kind === 'PING') {
+      return;
+    }
     this.updatePositions(parsedEvent);
     this.requestUpdate('positions');
   };
 
   async openConnection() {
-    // Server side positions
-    this.eventSource = new EventSource('http://localhost:8091/games/events');
-    this.eventSource.onmessage = this.onServerUpdate;
-    this.eventSource.onopen = () => {
-      console.log('Map connected to game positions.');
-    };
-    this.eventSource.onerror = err => {
-      console.warn('Error:', err);
-    };
+    this.discovery.resolve('game', window.location.href).then(location => {
+      // Server side positions
+      this.eventSource = new EventSource(`${location}/games/events`);
+      this.eventSource.onmessage = this.onServerUpdate;
+      this.eventSource.onopen = () => {
+        console.log('Map connected to game positions.');
+      };
+      this.eventSource.onerror = err => {
+        console.warn('Error:', err);
+      };
+    });
   }
 
   closeConnection() {

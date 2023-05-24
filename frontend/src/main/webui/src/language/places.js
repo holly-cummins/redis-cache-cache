@@ -1,10 +1,14 @@
+import { Discovery } from '../discovery/discovery.js';
+
 export class Places {
   places = [];
 
   initialized = false;
 
   constructor() {
-    fetch('http://localhost:8092/places')
+    new Discovery()
+      .resolve('place', window.location.href)
+      .then(location => fetch(`${location}/places`))
       .then(resp => resp.json())
       .then(array => {
         this.places = array;
@@ -17,9 +21,6 @@ export class Places {
   }
 
   getPlace(name) {
-    return this.places.find(s => {
-      console.log('looking for ', name, s);
-      return s.name === name;
-    });
+    return this.places.find(s => s.name === name);
   }
 }

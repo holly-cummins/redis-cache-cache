@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import java.time.Duration;
+
 @RestController
 public class MonitoringController {
 
@@ -21,7 +23,10 @@ public class MonitoringController {
     @Produces(MediaType.SERVER_SENT_EVENTS)
     @Blocking
     public Multi<MonitoringService.MonitoringData> stream() {
-        return monitoring.stream();
+        return Multi.createBy().merging().streams(monitoring.stream(),
+                Multi.createFrom().ticks().every(Duration.ofSeconds(10))
+                        .map(x -> MonitoringService.EMPTY)
+        );
     }
 
     @GetMapping("/monitoring/last")

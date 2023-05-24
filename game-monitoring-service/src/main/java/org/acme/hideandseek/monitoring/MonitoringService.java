@@ -8,6 +8,7 @@ import io.quarkus.redis.datasource.timeseries.TimeSeriesRange;
 import io.quarkus.runtime.Startup;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
+import io.vertx.mutiny.core.Vertx;
 
 import java.time.Duration;
 
@@ -18,11 +19,15 @@ public class MonitoringService {
     public static final String KEY = "hide-and-seek:game:monitoring";
     private final RedisDataSource redis;
     private final BroadcastProcessor<MonitoringData> stream;
+    private final Vertx vertx;
 
     record MonitoringData(double average, double duration) {}
 
-    public MonitoringService(RedisDataSource redis) {
+    public static MonitoringData EMPTY = new MonitoringData(-1, -1);
+
+    public MonitoringService(RedisDataSource redis, Vertx vertx) {
         this.redis = redis;
+        this.vertx = vertx;
         if (! this.redis.key().exists(KEY)) {
             this.redis.timeseries().tsCreate(KEY);
         }
