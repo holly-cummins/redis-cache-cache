@@ -81,7 +81,7 @@ class EventTicker extends BaseElement {
 
     switch (event.kind) {
       case 'HIDER':
-        return html` Oh, ${span} is hidden in ${f}.`;
+        return html` Ooh, ${span} is hidden in ${f}.`;
       case 'NEW_GAME':
         return html`Game started.`;
       case 'PLAYER_DISCOVERED': {
