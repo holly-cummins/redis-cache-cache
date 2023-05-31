@@ -46,6 +46,10 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-kubernetes-config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-kubernetes</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -78,6 +82,7 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
                 <configuration>
