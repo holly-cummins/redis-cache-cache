@@ -2,11 +2,11 @@ import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
 
 // This value needs to be hand-tuned
-export const imageMinLatitude = 48.81;
-export const imageMaxLatitude = 48.91;
+export const imageMinLatitude = 34.9;
+export const imageMaxLatitude = 60.908;
 
-export const imageMinLongitude = 2.22;
-export const imageMaxLongitude = 2.45;
+export const imageMinLongitude = -13.3;
+export const imageMaxLongitude = 27;
 
 export class MapImage extends BaseElement {
   static styles = [
@@ -68,8 +68,8 @@ export class MapImage extends BaseElement {
         width: ${transformedWidth}px;
         height: ${transformedHeight}px;
         transform: translate(${xOffset}px, ${yOffset}px)"
-        src="assets/paris-map.png"
-        alt="hand drawn map of Paris"
+        src="assets/map.png"
+        alt="hand drawn map of Europe"
       />
     </div>`;
   }
