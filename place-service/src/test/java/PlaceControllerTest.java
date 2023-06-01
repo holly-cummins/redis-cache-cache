@@ -19,24 +19,24 @@ class PlaceControllerTest {
         List<Place> list = get("/places")
                 .then()
                 .statusCode(200)
-                .extract().response().as(new TypeRef<List<Place>>() {
+                .extract().response().as(new TypeRef<>() {
                 });
         assertEquals(16, list.size());
     }
 
     @Test
     void search() {
-        List<Place> list = get("/places/search?query=royal")
+        List<Place> list = get("/places/search?query=old")
                 .then()
                 .statusCode(200)
-                .extract().response().as(new TypeRef<List<Place>>() {
+                .extract().response().as(new TypeRef<>() {
                 });
-        assertEquals(2, list.size());
+        assertEquals(3, list.size());
 
         list = get("/places/search?query=brouette")
                 .then()
                 .statusCode(200)
-                .extract().response().as(new TypeRef<List<Place>>() {
+                .extract().response().as(new TypeRef<>() {
                 });
         assertEquals(0, list.size());
     }

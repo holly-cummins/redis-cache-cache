@@ -39,9 +39,9 @@ class PlaceRepositoryTest {
 
     @Test
     void testSearch() {
-        var royal = repository.search("royal");
-        Assertions.assertEquals(2, royal.size());
-        for (Place place : royal) {
+        var old = repository.search("old");
+        Assertions.assertEquals(3, old.size());
+        for (Place place : old) {
             Assertions.assertNotNull(place.coordinates());
             Assertions.assertNotNull(place.name());
             Assertions.assertNotNull(place.description());
@@ -54,7 +54,7 @@ class PlaceRepositoryTest {
     @Test
     void testGeoIndices() {
         var place = repository.getPlaces().get(0);
-        var list = redis.geo(String.class).geosearch("hide-and-seek:geo", new GeoSearchArgs<String>().fromMember(place.name()).withDistance().byRadius(100, GeoUnit.KM));
+        var list = redis.geo(String.class).geosearch("hide-and-seek:geo", new GeoSearchArgs<String>().fromMember(place.name()).withDistance().byRadius(2000, GeoUnit.KM));
         Assertions.assertEquals(repository.getPlaces().size(), list.size());
     }
 }
