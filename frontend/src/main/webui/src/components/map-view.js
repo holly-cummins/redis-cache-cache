@@ -164,6 +164,7 @@ class MapView extends BaseElement {
         height,
         width,
       });
+      return response;
     } catch (e) {
       console.warn('Could not fetch map information.', e);
       this.places = [];
@@ -173,9 +174,9 @@ class MapView extends BaseElement {
   queryData = async e => {
     const name = e.detail?.place;
     try {
-      const response = await this.discovery
-        .resolve('place', window.location.href)
-        .then(location => fetch(`${location}/places/search?query=${name}`));
+      const location = await this.discovery.resolve('place', window.location.href)
+
+     const response = await fetch(`${location}/places/search?query=${name}`);
       const newPlaces = await response?.json();
       if (response.status === 200) {
         if (newPlaces) {
@@ -195,6 +196,7 @@ class MapView extends BaseElement {
           });
         }
       }
+      return response;
     } catch (err) {
       console.warn('Could not fetch map information.', err);
       this.places = [];
@@ -229,7 +231,8 @@ class MapView extends BaseElement {
   };
 
   async openConnection() {
-    this.discovery.resolve('game', window.location.href).then(location => {
+    const location = await this.discovery.resolve('game', window.location.href)
+
       // Server side positions
       this.eventSource = new EventSource(`${location}/games/events`);
       this.eventSource.onmessage = this.onServerUpdate;
@@ -239,7 +242,8 @@ class MapView extends BaseElement {
       this.eventSource.onerror = err => {
         console.warn('Error:', err);
       };
-    });
+
+      return this.eventSource;
   }
 
   closeConnection() {

@@ -1,10 +1,8 @@
 import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
-import { Places } from '../language/places.js';
 import { Discovery } from '../discovery/discovery.js';
 
 class EventTicker extends BaseElement {
-  static places = new Places();
 
   static styles = [
     BaseElement.styles,
@@ -20,7 +18,7 @@ class EventTicker extends BaseElement {
         border: 1px lightgray solid;
         border-radius: 5px;
         box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px,
-          rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
       }
 
       ul {
@@ -57,7 +55,8 @@ class EventTicker extends BaseElement {
     return html`
       <ul class="ticker">
         ${this.events.map(
-          entry => html` <li>${EventTicker.format(entry)}</li> `
+          entry => html`
+            <li>${EventTicker.format(entry)}</li> `
         )}
       </ul>
     `;
@@ -72,27 +71,24 @@ class EventTicker extends BaseElement {
   }
 
   static format(event) {
-    console.log('Event', event);
     if (event.kind === 'PING') {
       return '';
     }
-    const f = this.formatPlace(event.place);
-    const span = html`<span class="player">${event.hider}</span>`;
+    const placeSpan = this.formatPlace(event.place);
+    const hiderSpan = html`<span class="player">${event.hider}</span>`;
 
     switch (event.kind) {
       case 'HIDER':
-        return html` Ooh, ${span} is hidden in ${f}.`;
+        return html` Ooh, ${hiderSpan} is hidden in ${placeSpan}.`;
       case 'NEW_GAME':
         return html`Game started.`;
       case 'PLAYER_DISCOVERED': {
         return html`<span class="player">${event.seeker}</span> found
-          <span class="player">${event.hider}</span> ${this.formatPlace(
-            event.place
-          )}.`;
+        <span class="player">${event.hider}</span> in ${placeSpan}.`;
       }
       case 'SEEKER_MOVE': {
         return html`<span class="player">${event.seeker}</span> went to
-          ${this.formatPlace(event.destination)}.`;
+        ${this.formatPlace(event.destination)}.`;
       }
       case 'GAME_OVER': {
         const verb = event.seekerWon ? `won` : `lost`;
@@ -106,8 +102,7 @@ class EventTicker extends BaseElement {
 
   static formatPlace(place) {
     if (place) {
-      const p = this.places.getPlace(place);
-      return html`<span class="place">${p.name}</span>`;
+      return html`<span class="place">${place}</span>`;
     }
     return null;
   }
@@ -118,6 +113,7 @@ class EventTicker extends BaseElement {
   }
 
   onServerUpdate = event => {
+    if (!this.events) this.events = [];
     if (!this.events) this.events = [];
     const ev = JSON.parse(event?.data);
     if (!ev || ev.kind === 'PING') {
@@ -132,18 +128,19 @@ class EventTicker extends BaseElement {
   };
 
   async openConnection() {
-    await this.discovery
-      .resolve('game', window.location.href)
-      .then(location => {
-        const eventSource = new EventSource(`${location}/games/events`);
-        eventSource.onmessage = this.onServerUpdate;
-        eventSource.onopen = () => {
-          console.log('Connected to game events.');
-        };
-        eventSource.onerror = err => {
-          console.warn('Error:', err);
-        };
-      });
+    const location = await this.discovery.resolve('game', window.location.href)
+
+    const eventSource = new EventSource(`${location}/games/events`);
+    eventSource.onmessage = this.onServerUpdate;
+    eventSource.onopen = () => {
+      console.log('Connected to game events.');
+    };
+    eventSource.onerror = err => {
+      console.warn('Error:', err);
+    }
+
+    // return the event source so we can wait
+    return eventSource
   }
 }
 

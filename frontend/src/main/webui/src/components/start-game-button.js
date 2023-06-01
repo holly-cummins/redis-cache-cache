@@ -50,11 +50,11 @@ class StartGameButton extends BaseElement {
   }
 
   async fetchData() {
-    await this.discovery.resolve('game', window.location.href).then(location =>
-      fetch(`${location}/games`, {
+    const location = await this.discovery.resolve('game', window.location.href);
+
+    return fetch(`${location}/games`, {
         method: 'POST',
-      })
-    );
+      });
   }
 }
 

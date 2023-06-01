@@ -1,14 +1,24 @@
 import { html } from 'lit';
 import { expect, fixture, waitUntil } from '@open-wc/testing';
+import sinon from "sinon";
 import '../../src/components/event-ticker.js';
+import { Discovery } from '../../src/discovery/discovery.js';
+
+// the exact values here don't matter, something just needs to return
+const eventSourceUrl = "http://irrelevant"
 
 describe('Event ticker', () => {
   let element;
   describe('in the absence of data', () => {
     beforeEach(async () => {
+      sinon.stub(Discovery.prototype, 'resolve').resolves(eventSourceUrl);
       element = await fixture(html` <event-ticker></event-ticker>`);
       return element;
     });
+
+    afterEach(async () => {
+      sinon.restore();
+    })
 
     it('renders a placeholder', () => {
       expect(element.shadowRoot.textContent).to.contain('Nothing happened yet');
@@ -35,13 +45,14 @@ describe('Event ticker', () => {
     });
 
     const emit = data => {
-      sources['http://localhost:8091/games/events']?.onmessage({
+      sources[`${eventSourceUrl}/games/events`]?.onmessage({
         data: JSON.stringify(data),
       });
     };
 
     const emitAndWait = async data => {
       emit(data);
+
       // wait until data has been set
       await waitUntil(
         () => element.events,
@@ -57,15 +68,20 @@ describe('Event ticker', () => {
     };
 
     beforeEach(async () => {
+      sinon.stub(Discovery.prototype, 'resolve').resolves(eventSourceUrl);
       element = await fixture(html` <event-ticker></event-ticker>`);
     });
+
+    afterEach(() => {
+      sinon.restore();
+    })
 
     it('renders a list of events', async () => {
       await emitAndWait(firstEvent);
       const ul = element.shadowRoot.querySelector('ul');
       expect(ul).to.exist;
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain('first hider hides in Centre Pompidou');
+      expect(li.textContent).to.contain('first hider is hidden in Centre Pompidou');
     });
 
     it('prepends subsequent events', async () => {
@@ -81,7 +97,7 @@ describe('Event ticker', () => {
       expect(ul).to.exist;
       // The selector will select the first matching item, which in this case is what we want, because we want descending order
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain('second hider hides in Eiffel Tower');
+      expect(li.textContent).to.contain('second hider is hidden in Eiffel Tower');
     });
 
     it('renders game start events', async () => {
@@ -95,7 +111,7 @@ describe('Event ticker', () => {
         seeker: 'super-cucumber',
       });
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain('jeu commence');
+      expect(li.textContent).to.contain('started');
     });
 
     it('renders game end events when the seeker lost', async () => {
@@ -113,7 +129,7 @@ describe('Event ticker', () => {
       });
 
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain('perdu');
+      expect(li.textContent).to.contain('lost');
     });
 
     it('renders game end events when the seeker won', async () => {
@@ -131,21 +147,21 @@ describe('Event ticker', () => {
       });
 
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain('gagné');
+      expect(li.textContent).to.contain('won');
     });
 
     it('renders player discovered events', async () => {
       await emitAndWait({
         gameId: '59e0557d-8c16-43cc-a63c-446b0a06bed5',
-        hider: 'foundman',
+        hider: 'soughtman',
         kind: 'PLAYER_DISCOVERED',
         place: 'Devoxx',
         seeker: 'super-cucumber',
       });
 
       const li = element.shadowRoot.querySelector('li');
-      expect(li.textContent).to.contain('trouvé');
-      expect(li.textContent).to.contain('foundman');
+      expect(li.textContent).to.contain('found');
+      expect(li.textContent).to.contain('soughtman');
     });
 
     it('renders seeker move events', async () => {
