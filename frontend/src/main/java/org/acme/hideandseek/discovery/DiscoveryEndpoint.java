@@ -32,12 +32,12 @@ public class DiscoveryEndpoint {
 
     @GET
     public Map<String, String> getServiceLocations(@RestQuery("current") String currentLocation) {
-        if (currentLocation.contains("localhost:8080")) {
-            // Dev mode.
-            return Arrays.stream(Services.values()).collect(HashMap::new, (map, service) -> map.put(service.name, service.local), HashMap::putAll);
-        } else {
+        if (lookup.isOpenShift(currentLocation)) {
             // Prod mode
             return Arrays.stream(Services.values()).collect(HashMap::new, (map, service) -> map.put(service.name, lookup.resolve(service.remote)), HashMap::putAll);
+        } else {
+            // Local mode.
+            return Arrays.stream(Services.values()).collect(HashMap::new, (map, service) -> map.put(service.name, service.local), HashMap::putAll);
         }
 
     }

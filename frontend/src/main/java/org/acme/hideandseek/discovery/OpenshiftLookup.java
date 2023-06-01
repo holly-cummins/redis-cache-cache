@@ -10,7 +10,19 @@ public class OpenshiftLookup {
     @Inject
     OpenShiftClient client;
 
+    public boolean isOpenShift(String currentLocation) {
+        if (currentLocation.contains("localhost:")) { return false;}
+        if (currentLocation.contains("0.0.0.0")) { return false;}
+       try {
+           client.getVersion();
+       } catch (Exception e) {
+           return false;
+       }
+        return false;
+    }
+
     public String resolve(String serviceName) {
+
         return client.routes().list().getItems().stream()
                 .filter(r -> {
                     if ("service".equalsIgnoreCase(r.getSpec().getTo().getKind())) {
