@@ -84,8 +84,9 @@ class MapView extends BaseElement {
         background-color: black;
       }
 
+      // the width here is an arbitrary width, so we can center in it
       .label {
-        width: 100px; // an arbitrary width, so we can center in it
+        width: 100px;
         text-align: center;
         transform: translateX(-50%) translateY(-120%);
       }
