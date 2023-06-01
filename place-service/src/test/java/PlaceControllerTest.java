@@ -21,7 +21,7 @@ class PlaceControllerTest {
                 .statusCode(200)
                 .extract().response().as(new TypeRef<>() {
                 });
-        assertEquals(16, list.size());
+        assertEquals(17, list.size());
     }
 
     @Test

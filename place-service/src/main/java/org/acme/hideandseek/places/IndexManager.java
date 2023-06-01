@@ -14,7 +14,8 @@ public class IndexManager {
     public static final String INDEX_NAME = "hide-and-seek:places-index";
 
     public IndexManager(RedisDataSource redis) {
-        // FT.CREATE  ON JSON PREFIX 1 hide-and-seek:places: SCHEMA $.name AS name TEXT $.description as description TEXT $.coordinates AS coordinates GEO
+        // FT.CREATE  ON JSON PREFIX 1 hide-and-seek:places: SCHEMA $.name AS name TEXT $.description
+        // as description TEXT $.coordinates AS coordinates GEO
         if (!redis.search().ft_list().contains(INDEX_NAME)) {
             redis.search().ftCreate(INDEX_NAME, new CreateArgs()
                     .onJson()
