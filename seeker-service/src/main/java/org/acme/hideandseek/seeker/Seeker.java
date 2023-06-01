@@ -98,7 +98,7 @@ public class Seeker implements Runnable {
         // Compute the distance between the current position and the picked destination
         var distance = redis.geo(String.class)
                 .geodist("hide-and-seek:geo", position, destination, GeoUnit.KM);
-        var duration = (int) (distance.orElse(0.0) / player.speed()) *2;
+        var duration = (int) (distance.orElse(0.0) / player.speed()) *10;
         LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %skm, " +
                 "it will take %sms", player.name(), position, destination, distance.orElse(0.0), duration);
 
