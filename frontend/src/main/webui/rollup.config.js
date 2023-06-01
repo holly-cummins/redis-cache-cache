@@ -1,6 +1,7 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
 import html from '@web/rollup-plugin-html';
+import {copy} from '@web/rollup-plugin-copy';
 import { importMetaAssets } from '@web/rollup-plugin-import-meta-assets';
 import esbuild from 'rollup-plugin-esbuild';
 import { generateSW } from 'rollup-plugin-workbox';
@@ -30,6 +31,10 @@ export default {
     esbuild({
       minify: true,
       target: ['chrome64', 'firefox67', 'safari11.1'],
+    }),
+    // Copy any static assets to build directory to make sure they still work in prod
+    copy({
+      patterns: ['images/**/*', 'assets/**/*'],
     }),
     /** Bundle assets references via import.meta.url */
     importMetaAssets(),
