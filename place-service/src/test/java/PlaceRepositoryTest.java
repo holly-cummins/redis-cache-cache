@@ -54,7 +54,7 @@ class PlaceRepositoryTest {
     @Test
     void testGeoIndices() {
         var place = repository.getPlaces().get(0);
-        var list = redis.geo(String.class).geosearch("hide-and-seek:geo", new GeoSearchArgs<String>().fromMember(place.name()).withDistance().byRadius(2000, GeoUnit.KM));
+        var list = redis.geo(String.class).geosearch("hide-and-seek:geo", new GeoSearchArgs<String>().fromMember(place.name()).withDistance().byRadius(3000, GeoUnit.KM));
         Assertions.assertEquals(repository.getPlaces().size(), list.size());
     }
 }
