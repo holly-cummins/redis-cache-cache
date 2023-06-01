@@ -33,7 +33,7 @@ public class Seeker implements Runnable {
 
 
     public Seeker(PlaceRepository repository, RedisDataSource redis,
-                  @ConfigProperty(name = "hide-and-seek.seeker-initial-position", defaultValue = "Devoxx")
+                  @ConfigProperty(name = "hide-and-seek.seeker-initial-position", defaultValue = "Paris")
                   String initialPosition) {
         this.redis = redis;
         this.repository = repository;
@@ -97,9 +97,9 @@ public class Seeker implements Runnable {
     private void goToPlace(String destination) {
         // Compute the distance between the current position and the picked destination
         var distance = redis.geo(String.class)
-                .geodist("hide-and-seek:geo", position, destination, GeoUnit.M);
-        var duration = (int) (distance.orElse(0.0) / player.speed());
-        LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, " +
+                .geodist("hide-and-seek:geo", position, destination, GeoUnit.KM);
+        var duration = (int) (distance.orElse(0.0) / player.speed()) *2;
+        LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %skm, " +
                 "it will take %sms", player.name(), position, destination, distance.orElse(0.0), duration);
 
         // Send the move event

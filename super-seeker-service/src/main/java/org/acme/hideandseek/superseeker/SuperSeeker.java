@@ -47,7 +47,7 @@ public class SuperSeeker implements Runnable {
         for (String p : places) {
             var list = redis.geo(String.class).geosearch("hide-and-seek:geo",
                     new GeoSearchArgs<String>().fromMember(p)
-                            .byRadius(100_000, M) // So, distances are given in m
+                            .byRadius(1_000_000, M) // So, distances are given in m
                             .withDistance()
                             .withCoordinates());
 
