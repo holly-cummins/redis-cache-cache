@@ -2,6 +2,7 @@ package org.acme.hideandseek.superseeker;
 
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.geo.GeoSearchArgs;
+import io.quarkus.redis.datasource.geo.GeoUnit;
 import io.quarkus.redis.datasource.geo.GeoValue;
 import io.quarkus.redis.datasource.graph.GraphQueryResponseItem;
 import io.quarkus.redis.datasource.list.KeyValue;
@@ -16,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
-
-import static io.quarkus.redis.datasource.geo.GeoUnit.M;
 
 @Startup
 public class SuperSeeker implements Runnable {
@@ -47,7 +46,7 @@ public class SuperSeeker implements Runnable {
         for (String p : places) {
             var list = redis.geo(String.class).geosearch("hide-and-seek:geo",
                     new GeoSearchArgs<String>().fromMember(p)
-                            .byRadius(1_000_000, M) // So, distances are given in m
+                            .byRadius(50_000, GeoUnit.KM) // So, distances are given in km
                             .withDistance()
                             .withCoordinates());
 
@@ -129,8 +128,8 @@ public class SuperSeeker implements Runnable {
             // Nowhere to do...
             return;
         }
-        var duration = (int) (next.distance / player.speed());
-        LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %sm, it will take %sms", player.name(), position, next.destination, next.distance, duration);
+        var duration = (int) (next.distance / player.speed()) * 7;
+        LOGGER.infof("%s (seeker) wants to go from  %s to %s, the distance is %skm, it will take %sms", player.name(), position, next.destination, next.distance, duration);
         redis.list(Event.SeekerMoveEvent.class).rpush("hide-and-seek:game",
                 new Event.SeekerMoveEvent(game, this.position, next.destination, duration, next.distance));
         Thread.ofVirtual().start(() -> {
