@@ -191,8 +191,8 @@ class MapView extends BaseElement {
       );
 
       const response = await fetch(`${location}/places/search?query=${name}`);
-      const newPlaces = await response?.json();
       if (response.status === 200) {
+        const newPlaces = await response?.json();
         if (newPlaces) {
           const concatenatedPlaces = newPlaces.concat(this.places || []);
           // Strip places with the same name
@@ -213,7 +213,12 @@ class MapView extends BaseElement {
       return response;
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.warn('Could not fetch map information.', err);
+      console.warn(
+        'Could not fetch map information for',
+        name,
+        '. Error is:',
+        err
+      );
       this.places = [];
       return undefined;
     }

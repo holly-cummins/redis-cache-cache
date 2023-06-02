@@ -569,15 +569,25 @@ describe('Map view', () => {
       );
     });
 
-    // Fixme, June 1
-    xit('gracefully handles non-existent places', async () => {
+    it('gracefully handles non-existent places', async () => {
+      const nonexistent = 'nonexistent';
       expect(element.shadowRoot.textContent).to.contain('Centre Pompidou');
-      stubbedFetch.returns(mockApiResponse([]));
-      triggerPopulate('nonexistent');
+
+      // Take some care defining our stubs
+      // Discovery is async, which means fetching is multithreaded, so if we are unlucky the same
+      // response will be returned twice by sinon. Checks like onFirstCall do not seem to be enough
+      // to avoid hitting the same instance twice, because concurrency is hard ... but specific
+      // value checks do the trick
+      stubbedFetch
+        .withArgs(sinon.match(arg => arg.endsWith(nonexistent)))
+        .returns(mockApiResponse([]));
+      const secondPlace = places[1];
+      stubbedFetch
+        .withArgs(sinon.match(arg => arg.endsWith(secondPlace.name)))
+        .returns(mockApiResponse([secondPlace]));
+      triggerPopulate(nonexistent);
       // it is hard to wait until data has been updated since no update is expected
       // to force an update, now add a third place
-      const secondPlace = places[1];
-      stubbedFetch.returns(mockApiResponse([secondPlace]));
       triggerPopulate(secondPlace.name);
       // wait until data has been updated
       await waitUntil(
@@ -586,8 +596,6 @@ describe('Map view', () => {
       );
       expect(element.shadowRoot.textContent).to.contain('Centre Pompidou');
       expect(element.shadowRoot.textContent).to.contain(secondPlace.name);
-
-      expect(element.shadowRoot.textContent).to.contain('Centre Pompidou');
     });
   });
 });
