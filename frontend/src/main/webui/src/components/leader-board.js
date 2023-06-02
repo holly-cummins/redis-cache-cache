@@ -81,13 +81,15 @@ class Leaderboard extends BaseElement {
 
   async fetchData() {
     try {
-      const response = await this.discovery
-        .resolve('leaderboard', window.location.href)
-        .then(location => fetch(`${location}/leaderboard/`));
+      const location = await this.discovery.resolve(
+        'leaderboard',
+        window.location.href
+      );
+      const response = await fetch(`${location}/leaderboard/`);
       this.data = await response?.json();
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn('Could not fetch leaderboard information.');
+      console.warn('Could not fetch leaderboard information.', e);
     }
   }
 

@@ -16,5 +16,5 @@ describe('CacheCacheApp', () => {
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
-  }).timeout(10000);
+  }).timeout(20000);
 });

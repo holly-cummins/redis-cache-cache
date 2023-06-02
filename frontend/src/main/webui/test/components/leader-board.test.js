@@ -24,7 +24,7 @@ describe('Leaderboard', () => {
       return element;
     });
 
-    afterEach(async () => {
+    afterEach(() => {
       sinon.restore();
     });
 

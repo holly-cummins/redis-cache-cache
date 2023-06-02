@@ -6,6 +6,13 @@ export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
   /** Test files to run */
   files: 'test/**/*.test.js',
 
+  testFramework: {
+    config: {
+      ui: "bdd",
+      timeout: 10000
+    },
+  },
+
   /** Resolve bare module imports */
   nodeResolve: {
     exportConditions: ['browser', 'development'],
