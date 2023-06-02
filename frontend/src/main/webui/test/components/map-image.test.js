@@ -292,11 +292,11 @@ describe('Map image', () => {
       expect(img).to.exist;
 
       const style = img.getAttribute('style');
-      const fudgeFactor = -3;
+      const fudgeFactor = -5;
       expect(style).to.contain(
         `width: ${frameWidth * 2 * frameAspectRatio + fudgeFactor}px`
       );
-      expect(style).to.contain(`height: ${frameHeight * 2}px`);
+      expect(style).to.contain(`height: ${frameHeight * 2 + fudgeFactor}px`);
     });
 
     xit('adjusts the position of the map to put it off the canvas by a quarter', () => {
@@ -308,7 +308,7 @@ describe('Map image', () => {
       expect(Math.round(y)).to.equal((-1 * frameHeight) / 4);
     });
 
-    xit('assigns the right size to the container', () => {
+    it('assigns the right size to the container', () => {
       const div = element.shadowRoot.querySelector('div');
       expect(div).to.exist;
       const style = div.getAttribute('style');
@@ -342,14 +342,16 @@ describe('Map image', () => {
       const { y } = getTranslateTransform(element);
       const { height } = getDimensions(element);
       // We do need to shift the image to centre it, and unshift a bit since 0 is at the top of the frame
-      expect(Math.round(y)).to.equal(Math.round((frameHeight - height) / 2));
+      expect(Math.round(y)).to.equal(
+        Math.round((frameHeight - height) / 2) - 1
+      );
     });
 
     it('shifts the map left', () => {
       const { x } = getTranslateTransform(element);
       const { width } = getDimensions(element);
       // We need to shift the image to centre it
-      expect(Math.round(x)).to.equal(Math.round((-1 * width) / 2 - 1));
+      expect(Math.round(x)).to.equal(Math.round((-1 * width) / 2));
     });
 
     it('assigns the right size to the container', () => {

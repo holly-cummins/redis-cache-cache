@@ -1,6 +1,3 @@
-// This is only needed for single-point or row or column cases, and the exact value doesn't matter then
-const defaultScaleFactor = 50000;
-
 class CoordinateConverter {
   height;
 
@@ -8,13 +5,16 @@ class CoordinateConverter {
 
   scaleFactor;
 
+  numPoints;
+
   constructor({ places, height, width }) {
     this.height = height;
     this.width = width;
     this.processPlaces(places);
+    this.numPoints = places.length;
   }
 
-  isSinglePoint = () => this.scaleFactor === defaultScaleFactor;
+  isSinglePoint = () => this.numPoints <= 1;
 
   processPlaces = places => {
     // NOTE! You would think the coordinates are latitude,longitude, but redis swaps those
@@ -37,6 +37,10 @@ class CoordinateConverter {
     // We can use a geographically 'correct' value, or tune it to look good
     // No matter what value we set for this, the tests should still pass
     this.aspectRatio = Math.cos(latitudeInRadians);
+
+    // This is only needed for single-point or row or column cases, and the exact value doesn't matter then
+    // If there's only one point, aim to show about 5% of the map
+    const defaultScaleFactor = this.height * 0.8;
 
     // check height and width both to make sure it fits
     this.scaleFactor = Math.min(
