@@ -5,7 +5,7 @@ import '../../src/components/leader-board.js';
 import { Discovery } from '../../src/discovery/discovery.js';
 
 // the exact values here don't matter, something just needs to return
-const eventSourceUrl = "http://irrelevant"
+const eventSourceUrl = 'http://irrelevant';
 
 const mockApiResponse = (body = {}) =>
   Promise.resolve(
@@ -24,9 +24,9 @@ describe('Leaderboard', () => {
       return element;
     });
 
-    afterEach(async() => {
-      sinon.restore()
-    })
+    afterEach(async () => {
+      sinon.restore();
+    });
 
     it('renders a placeholder', () => {
       expect(element.shadowRoot.textContent).to.contain('Loading...');
@@ -37,8 +37,7 @@ describe('Leaderboard', () => {
     }).timeout(10000);
   });
 
-  // Fixme June 1
-  xdescribe('when data is available', () => {
+  describe('when data is available', () => {
     const body = [
       { value: 'fakeman', score: 2.0 },
       {
@@ -60,7 +59,7 @@ describe('Leaderboard', () => {
 
     afterEach(() => {
       window.fetch.restore(); // remove stub
-      sinon.restore()
+      sinon.restore();
     });
 
     it('renders a table', () => {
@@ -114,12 +113,15 @@ describe('Leaderboard', () => {
       emit(body);
 
       // wait until data has been set
-      await waitUntil(() => element.data, 'Leaderboard element did not populate its data');
+      await waitUntil(
+        () => element.data,
+        'Leaderboard element did not populate its data'
+      );
     });
 
     afterEach(() => {
-      sinon.restore()
-    })
+      sinon.restore();
+    });
 
     it('renders a table', () => {
       const table = element.shadowRoot.querySelector('table');
