@@ -338,17 +338,21 @@ describe('Map image', () => {
       expect(height).to.be.greaterThan(frameHeight);
     });
 
-    // Fixme, June 1
-    xit('shifts the map up', () => {
+    it('shifts the map up', () => {
       const { y } = getTranslateTransform(element);
-      // We actually do need to shift the image to centre it
-      expect(Math.round(y)).to.equal(-1 * frameHeight + 2);
+      const { height } = getDimensions(element);
+      // We do need to shift the image to centre it, and unshift a bit since 0 is at the top of the frame
+      // The 1 is a width for a border, maybe?
+      expect(Math.round(y)).to.equal(
+        Math.round((frameHeight - height) / 2) - 1
+      );
     });
 
-    xit('shifts the map left', () => {
+    it('shifts the map left', () => {
       const { x } = getTranslateTransform(element);
-      // We need to shift the image to centre it, and then shift it more to adjust for the scale
-      expect(Math.round(x)).to.equal((-3 * frameWidth) / 2);
+      const { width } = getDimensions(element);
+      // We need to shift the image to centre it
+      expect(Math.round(x)).to.equal((-1 * width) / 2);
     });
 
     it('assigns the right size to the container', () => {
