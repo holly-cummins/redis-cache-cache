@@ -393,10 +393,9 @@ describe('Map view', () => {
         expect(top).to.be.lessThanOrEqual(maxHeight);
       });
 
-      // Fixme, June 1
-      xit('passes the a11y audit', async () => {
+      it('passes the a11y audit', async () => {
         await expect(element).shadowDom.to.be.accessible();
-      });
+      }).timeout(10000);
     });
 
     describe('when events are streamed', () => {
