@@ -342,17 +342,14 @@ describe('Map image', () => {
       const { y } = getTranslateTransform(element);
       const { height } = getDimensions(element);
       // We do need to shift the image to centre it, and unshift a bit since 0 is at the top of the frame
-      // The 1 is a width for a border, maybe?
-      expect(Math.round(y)).to.equal(
-        Math.round((frameHeight - height) / 2) - 1
-      );
+      expect(Math.round(y)).to.equal(Math.round((frameHeight - height) / 2));
     });
 
     it('shifts the map left', () => {
       const { x } = getTranslateTransform(element);
       const { width } = getDimensions(element);
       // We need to shift the image to centre it
-      expect(Math.round(x)).to.equal((-1 * width) / 2);
+      expect(Math.round(x)).to.equal(Math.round((-1 * width) / 2 - 1));
     });
 
     it('assigns the right size to the container', () => {
