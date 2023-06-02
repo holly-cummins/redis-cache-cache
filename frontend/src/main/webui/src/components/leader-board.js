@@ -16,6 +16,8 @@ class Leaderboard extends BaseElement {
         border-radius: 5px;
         box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px,
           rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        background-color: white;
+        opacity: 80%;
       }
 
       table {
@@ -84,13 +86,13 @@ class Leaderboard extends BaseElement {
         .then(location => fetch(`${location}/leaderboard/`));
       this.data = await response?.json();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn('Could not fetch leaderboard information.');
     }
   }
 
   onServerUpdate = event => {
     // Leaving the log in so we can see how often events are coming in
-    console.log('board - Updating data:', event);
     const d = JSON.parse(event?.data);
     if (d.length === 0) {
       // ping frame
@@ -106,10 +108,12 @@ class Leaderboard extends BaseElement {
       .then(location => new EventSource(`${location}/leaderboard/events`));
 
     this.eventSource.onmessage = this.onServerUpdate;
-    this.eventSource.onopen = function () {
+    this.eventSource.onopen = () => {
+      // eslint-disable-next-line no-console
       console.log('Connected to leaderboard.');
     };
-    this.eventSource.onerror = function (err) {
+    this.eventSource.onerror = err => {
+      // eslint-disable-next-line no-console
       console.warn('Error:', err);
     };
   }

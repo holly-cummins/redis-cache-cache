@@ -3,7 +3,6 @@ import { BaseElement } from './base-element.js';
 import { Discovery } from '../discovery/discovery.js';
 
 class EventTicker extends BaseElement {
-
   static styles = [
     BaseElement.styles,
     css`
@@ -14,11 +13,13 @@ class EventTicker extends BaseElement {
         width: 450px;
         max-height: 250px;
         position: absolute;
+        background-color: white;
+        opacity: 80%;
         z-index: 2;
         border: 1px lightgray solid;
         border-radius: 5px;
         box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px,
-        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+          rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
       }
 
       ul {
@@ -55,8 +56,7 @@ class EventTicker extends BaseElement {
     return html`
       <ul class="ticker">
         ${this.events.map(
-          entry => html`
-            <li>${EventTicker.format(entry)}</li> `
+          entry => html` <li>${EventTicker.format(entry)}</li> `
         )}
       </ul>
     `;
@@ -84,11 +84,11 @@ class EventTicker extends BaseElement {
         return html`Game started.`;
       case 'PLAYER_DISCOVERED': {
         return html`<span class="player">${event.seeker}</span> found
-        <span class="player">${event.hider}</span> in ${placeSpan}.`;
+          <span class="player">${event.hider}</span> in ${placeSpan}.`;
       }
       case 'SEEKER_MOVE': {
         return html`<span class="player">${event.seeker}</span> went to
-        ${this.formatPlace(event.destination)}.`;
+          ${this.formatPlace(event.destination)}.`;
       }
       case 'GAME_OVER': {
         const verb = event.seekerWon ? `won` : `lost`;
@@ -117,6 +117,7 @@ class EventTicker extends BaseElement {
     if (!this.events) this.events = [];
     const ev = JSON.parse(event?.data);
     if (!ev || ev.kind === 'PING') {
+      // eslint-disable-next-line no-console
       console.log('ping!');
       return;
     }
@@ -128,19 +129,21 @@ class EventTicker extends BaseElement {
   };
 
   async openConnection() {
-    const location = await this.discovery.resolve('game', window.location.href)
+    const location = await this.discovery.resolve('game', window.location.href);
 
     const eventSource = new EventSource(`${location}/games/events`);
     eventSource.onmessage = this.onServerUpdate;
     eventSource.onopen = () => {
+      // eslint-disable-next-line no-console
       console.log('Connected to game events.');
     };
     eventSource.onerror = err => {
+      // eslint-disable-next-line no-console
       console.warn('Error:', err);
-    }
+    };
 
     // return the event source so we can wait
-    return eventSource
+    return eventSource;
   }
 }
 
