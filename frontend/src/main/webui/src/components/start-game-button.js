@@ -9,15 +9,15 @@ class StartGameButton extends BaseElement {
       button {
         margin: 2rem;
         width: 500px;
-        background-color: #177831;
-        border: 1px solid #177831;
+        background-color: #4e7b9e;
+        border: 1px solid #4e7b9e;
         border-radius: 4px;
         box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px 0;
         box-sizing: border-box;
         color: #fff;
         cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 16px;
+        font-weight: 600;
         outline: none;
         outline: 0;
         padding: 10px 25px;
@@ -53,8 +53,8 @@ class StartGameButton extends BaseElement {
     const location = await this.discovery.resolve('game', window.location.href);
 
     return fetch(`${location}/games`, {
-        method: 'POST',
-      });
+      method: 'POST',
+    });
   }
 }
 

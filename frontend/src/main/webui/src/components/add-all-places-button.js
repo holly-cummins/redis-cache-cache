@@ -8,8 +8,8 @@ export class AddAllPlacesButton extends BaseElement {
       button {
         margin: 1rem;
         width: 250px;
-        background-color: #9dc183;
-        border: 1px solid #9dc183;
+        background-color: #b2d3ed;
+        border: 1px solid #b2d3ed;
         border-radius: 4px;
         box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px 0;
         box-sizing: border-box;
