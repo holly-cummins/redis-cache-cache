@@ -21,7 +21,7 @@ class MapView extends BaseElement {
         text-align: center;
         padding: 100px 300px 100px 300px;
         font-weight: normal;
-        color: grey;
+        color: dimgray;
         font-style: italic;
         font-size: 20px;
       }
