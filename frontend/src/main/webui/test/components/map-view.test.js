@@ -7,7 +7,7 @@ import { Discovery } from '../../src/discovery/discovery.js';
 const coordsPattern = /left:(-?[0-9.]+)px; top:(-?[0-9.]+)px/;
 
 // the exact values here don't matter, something just needs to return
-const resolution = "http://irrelevant"
+const resolution = 'http://irrelevant';
 
 const places = [
   {
@@ -76,10 +76,9 @@ describe('Map view', () => {
 
     afterEach(async () => {
       sinon.restore();
-    })
+    });
 
-    // Fixme, June 1
-    xit('passes the a11y audit', async () => {
+    it('passes the a11y audit', async () => {
       await expect(element).shadowDom.to.be.accessible();
     });
   });
@@ -202,7 +201,7 @@ describe('Map view', () => {
 
       afterEach(() => {
         window.fetch.restore(); // remove stub
-        sinon.restore()
+        sinon.restore();
       });
 
       it('renders the place names', () => {
@@ -290,7 +289,7 @@ describe('Map view', () => {
 
       afterEach(() => {
         window.fetch.restore(); // remove stub
-        sinon.restore()
+        sinon.restore();
       });
 
       it('renders the place names', () => {
@@ -338,7 +337,7 @@ describe('Map view', () => {
 
       afterEach(() => {
         window.fetch.restore(); // remove stub
-        sinon.restore()
+        sinon.restore();
       });
 
       it('renders the place names', () => {
