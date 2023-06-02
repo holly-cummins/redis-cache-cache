@@ -39,6 +39,7 @@ class CacheCacheApp extends LitElement {
       flex-direction: row;
       justify-content: space-between;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .logo {
