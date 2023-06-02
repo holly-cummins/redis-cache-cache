@@ -30,16 +30,22 @@ class CacheCacheApp extends LitElement {
 
     .dashboard {
       display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .row {
-      display: flex;
       flex-direction: row;
       justify-content: space-between;
-      flex-wrap: wrap;
-      align-items: center;
+      align-items: flex-start;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      flex-wrap: wrap-reverse;
+      align-items: baseline;
+      z-index: 5;
+    }
+
+    .monitors {
+      z-index: 3;
     }
 
     .logo {
@@ -74,17 +80,17 @@ class CacheCacheApp extends LitElement {
   render() {
     return html`
       <main>
-        <div class="row">
+        <div class="controls">
           <add-place-button></add-place-button>
           <add-all-places-button></add-all-places-button>
           <start-game-button></start-game-button>
-          <leader-board></leader-board>
         </div>
         <div class="dashboard">
-          <div class="row">
+          <div class="monitors">
+            <leader-board></leader-board>
             <event-ticker></event-ticker>
-            <map-view></map-view>
           </div>
+          <map-view></map-view>
         </div>
       </main>
 

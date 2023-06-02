@@ -17,6 +17,15 @@ class MapView extends BaseElement {
   static styles = [
     BaseElement.styles,
     css`
+      h2 {
+        text-align: center;
+        padding: 100px 300px 100px 300px;
+        font-weight: normal;
+        color: grey;
+        font-style: italic;
+        font-size: 20px;
+      }
+
       .places {
         height: ${height}px;
         width: 100%;
@@ -24,7 +33,6 @@ class MapView extends BaseElement {
 
       .outer {
         left: 0;
-        margin: 80px;
       }
 
       .map {
@@ -114,7 +122,7 @@ class MapView extends BaseElement {
 
   render() {
     if (!this.places) {
-      return html` <h2>No places were added</h2> `;
+      return html` <h2>No places have been added</h2> `;
     }
     return html`
       <div class="outer">
@@ -167,17 +175,22 @@ class MapView extends BaseElement {
       });
       return response;
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn('Could not fetch map information.', e);
       this.places = [];
+      return undefined;
     }
   };
 
   queryData = async e => {
     const name = e.detail?.place;
     try {
-      const location = await this.discovery.resolve('place', window.location.href)
+      const location = await this.discovery.resolve(
+        'place',
+        window.location.href
+      );
 
-     const response = await fetch(`${location}/places/search?query=${name}`);
+      const response = await fetch(`${location}/places/search?query=${name}`);
       const newPlaces = await response?.json();
       if (response.status === 200) {
         if (newPlaces) {
@@ -199,8 +212,10 @@ class MapView extends BaseElement {
       }
       return response;
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.warn('Could not fetch map information.', err);
       this.places = [];
+      return undefined;
     }
   };
 
@@ -232,19 +247,21 @@ class MapView extends BaseElement {
   };
 
   async openConnection() {
-    const location = await this.discovery.resolve('game', window.location.href)
+    const location = await this.discovery.resolve('game', window.location.href);
 
-      // Server side positions
-      this.eventSource = new EventSource(`${location}/games/events`);
-      this.eventSource.onmessage = this.onServerUpdate;
-      this.eventSource.onopen = () => {
-        console.log('Map connected to game positions.');
-      };
-      this.eventSource.onerror = err => {
-        console.warn('Error:', err);
-      };
+    // Server side positions
+    this.eventSource = new EventSource(`${location}/games/events`);
+    this.eventSource.onmessage = this.onServerUpdate;
+    this.eventSource.onopen = () => {
+      // eslint-disable-next-line no-console
+      console.log('Map connected to game positions.');
+    };
+    this.eventSource.onerror = err => {
+      // eslint-disable-next-line no-console
+      console.warn('Error:', err);
+    };
 
-      return this.eventSource;
+    return this.eventSource;
   }
 
   closeConnection() {
