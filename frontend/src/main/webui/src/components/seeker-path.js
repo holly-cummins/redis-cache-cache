@@ -12,10 +12,10 @@ class SeekerPath extends BaseElement {
         z-index: 10;
       }
 
-      .path {
+      .animated {
         stroke-dasharray: 1000;
         stroke-dashoffset: 1000;
-        animation: dashdraw 5s linear forwards;
+        animation-iteration-count: 1;
       }
 
       @keyframes dashdraw {
@@ -39,15 +39,19 @@ class SeekerPath extends BaseElement {
       width="${this.width}px"
     >
       ${Array.isArray(this.points) &&
-      this.points?.map(entry => SeekerPath.plot(entry))}
+      this.points?.map((entry, i) => SeekerPath.plot(entry, i === 0))}
     </svg>`;
+    // isLast is checking the beginning of the array because they come in reverse order
   }
 
-  static plot(point) {
+  static plot(point, isLast) {
+    const animation = isLast
+      ? `animation: dashdraw ${point.duration / 1000}s linear forwards;`
+      : '';
     // Sometimes the points don't have a from and a to
     if (point?.from && point.to) {
       return svg`
-      <path
+      <path class=${isLast ? 'animated' : ''} style=${animation}
         fill="none"
         stroke-width="3px"
         stroke="#949494"
