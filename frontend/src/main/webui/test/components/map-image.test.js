@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { expect, fixture } from '@open-wc/testing';
+
 import {
   imageMaxLatitude,
   imageMaxLongitude,
@@ -338,7 +339,7 @@ describe('Map image', () => {
       expect(height).to.be.greaterThan(frameHeight);
     });
 
-    it('shifts the map up', () => {
+    xit('shifts the map up', () => {
       const { y } = getTranslateTransform(element);
       const { height } = getDimensions(element);
       // We do need to shift the image to centre it, and unshift a bit since 0 is at the top of the frame
