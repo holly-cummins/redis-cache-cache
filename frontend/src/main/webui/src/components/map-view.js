@@ -2,6 +2,7 @@ import { css, html } from 'lit';
 import { BaseElement } from './base-element.js';
 import './map-image.js';
 import './seeker-path.js';
+import './hiders.js';
 import { CoordinateConverter } from '../geometry/cooordinate-converter.js';
 import { Discovery } from '../discovery/discovery.js';
 
@@ -55,8 +56,7 @@ class MapView extends BaseElement {
       }
 
       .discovery {
-        color: red;
-        animation: pulse 1s 6;
+        font-size: 18px;
       }
 
       @keyframes pulse {
@@ -107,7 +107,9 @@ class MapView extends BaseElement {
     return {
       places: {},
       positions: {},
+      discoveries: { type: Array },
       seeks: { type: Array },
+      hideouts: { type: Array },
       scaleFactor: {},
       latitudeOffset: {},
       longitudeOffset: {},
@@ -124,6 +126,10 @@ class MapView extends BaseElement {
     if (!this.places) {
       return html` <h2>No places have been added</h2> `;
     }
+    const hideoutLength = this.hideouts?.length ? this.hideouts?.length : 0;
+    const discoveryLength = this.discoveries?.length
+      ? this.discoveries?.length
+      : 0;
     return html`
       <div class="outer">
         <div class="map">
@@ -133,6 +139,13 @@ class MapView extends BaseElement {
             height="${height}"
             width="${width}"
           ></seeker-path>
+          <hidey-holes
+            count=${hideoutLength + discoveryLength}
+            .points="${this.hideouts}"
+            .discoveries="${this.discoveries}"
+            height="${height}"
+            width="${width}"
+          ></hidey-holes>
           <map-image
             .converter="${this.coordinateConverter}"
             height="${height}"
@@ -275,17 +288,21 @@ class MapView extends BaseElement {
 
   updatePositions(event) {
     switch (event.kind) {
-      case 'HIDER':
-        // TODO want to show the name?
-        // TODO we do not actually have hiding events
-        this.positions[event.place] = 'hiding';
-        break;
       case 'NEW_GAME':
         this.positions = {};
+        this.discoveries = [];
         this.seeks = [];
+        this.hideouts = Object.values(event.hiders).map(place =>
+          this.coordinateConverter.getCoordinatesForPlace(this.getPlace(place))
+        );
         break;
       case 'PLAYER_DISCOVERED': {
         this.positions[event.place] = 'discovery';
+        this.discoveries.unshift(
+          this.coordinateConverter.getCoordinatesForPlace(
+            this.getPlace(event.place)
+          )
+        );
         break;
         // Do we want to wipe this?
       }

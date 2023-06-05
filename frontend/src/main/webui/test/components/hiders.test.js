@@ -3,12 +3,12 @@ import { expect, fixture } from '@open-wc/testing';
 
 import '../../src/components/seeker-path.js';
 
-describe('Seeker Path', () => {
+describe('Hiders', () => {
   let element;
 
   describe('with no data', () => {
     beforeEach(async () => {
-      element = await fixture(html` <seeker-path></seeker-path>`);
+      element = await fixture(html` <hidey-holes></hidey-holes>`);
     });
 
     it('renders an svg', () => {
@@ -40,8 +40,8 @@ describe('Seeker Path', () => {
       expect(svg).to.exist;
     });
 
-    it('renders a path', () => {
-      const el = element.shadowRoot.querySelector('path');
+    it('renders a marker', () => {
+      const el = element.shadowRoot.querySelector('circle');
       expect(el).to.exist;
     });
 

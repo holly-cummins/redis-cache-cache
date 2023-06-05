@@ -53,12 +53,6 @@ class SeekerPath extends BaseElement {
         stroke="#949494"
         d="M${point.from[0]} ${point.from[1]}, ${point.to[0]} ${point.to[1]}"
       ></path>
-      <circle
-        r="10"
-        cx="${point.to[0]}"
-        cy="${point.to[1]}"
-        fill="#BEBEBE"
-      ></circle>
     `;
     }
     return svg``;
