@@ -116,7 +116,11 @@ class EventTicker extends BaseElement {
     if (!this.events) this.events = [];
     if (!this.events) this.events = [];
     const ev = JSON.parse(event?.data);
-    if (!ev || ev.kind === 'PING') {
+    if (!ev) {
+      return;
+    }
+
+    if (ev?.kind === 'PING') {
       // eslint-disable-next-line no-console
       console.log('ping!');
       return;
