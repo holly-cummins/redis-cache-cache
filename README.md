@@ -1,5 +1,10 @@
 # Redis Cache Cache
 
+A game of cache-cache ("hide and seek" in French), using Redis for the data layer. 
+The Redis features shown include pub/sub, transactions, JSON, search, graph data, sorted sets, and geospatial data. 
+
+This is what the game looks like in action:
+
 https://github.com/holly-cummins/redis-cache-cache/assets/11509290/40ac6a6d-3fc4-4e69-b6b4-6b715ba37777
 
 # Running instructions
