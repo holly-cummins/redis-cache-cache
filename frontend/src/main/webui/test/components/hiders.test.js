@@ -24,9 +24,9 @@ describe('Hiders', () => {
   describe('with some points', () => {
     beforeEach(async () => {
       const data = [
-        { from: [0, 0], to: [1, 1] },
-        { from: [0, 10], to: [10, 1] },
-        { from: [20, 0], to: [1, 12] },
+        { coords: [0, 0] },
+        { coords: [0, 10], discovered: true },
+        { coords: [20, 0] },
       ];
 
       element = await fixture(html` <hidey-holes
