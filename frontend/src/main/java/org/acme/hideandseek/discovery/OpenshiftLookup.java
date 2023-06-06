@@ -20,7 +20,6 @@ public class OpenshiftLookup {
         try {
             client.getVersion();
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
         return true;
