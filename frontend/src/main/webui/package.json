@@ -16,10 +16,10 @@
     "start": "web-dev-server"
   },
   "dependencies": {
-    "@math.gl/web-mercator": "^3.6.3",
     "lit": "^2.7.2"
   },
   "devDependencies": {
+    "@math.gl/web-mercator": "^3.6.3",
     "@babel/preset-env": "^7.16.4",
     "@custom-elements-manifest/analyzer": "^0.4.17",
     "@open-wc/building-rollup": "^2.0.2",
