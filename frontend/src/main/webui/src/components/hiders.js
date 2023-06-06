@@ -10,6 +10,10 @@ class Hiders extends BaseElement {
         left: 0;
         z-index: 9;
       }
+
+      circle {
+        stroke-width: 2;
+      }
     `,
   ];
 
@@ -27,34 +31,19 @@ class Hiders extends BaseElement {
     >
       ${Array.isArray(this.points) &&
       this.points?.map(entry => Hiders.plot(entry))}
-      ${Array.isArray(this.discoveries) &&
-      this.discoveries?.map(entry => Hiders.plotDiscovery(entry))}
     </svg>`;
   }
 
-  static plot(point) {
-    if (point) {
+  static plot({ coords, discovered }) {
+    if (coords) {
+      const stroke = discovered ? '#EE0000' : '#BEBEBE';
       return svg`
       <circle
         r="10"
-        cx="${point[0]}"
-        cy="${point[1]}"
+        cx="${coords[0]}"
+        cy="${coords[1]}"
         fill="#BEBEBE"
-      ></circle>
-    `;
-    }
-    return svg``;
-  }
-
-  static plotDiscovery(point) {
-    if (point) {
-      return svg`
-      <circle
-        r="10"
-        cx="${point[0]}"
-        cy="${point[1]}"
-        stroke="#EE0000"
-        fill="#BEBEBE"
+        stroke="${stroke}"
       ></circle>
     `;
     }

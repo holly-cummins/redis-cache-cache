@@ -107,7 +107,6 @@ class MapView extends BaseElement {
     return {
       places: {},
       positions: {},
-      discoveries: { type: Array },
       seeks: { type: Array },
       hideouts: { type: Array },
       scaleFactor: {},
@@ -126,10 +125,13 @@ class MapView extends BaseElement {
     if (!this.places) {
       return html` <h2>No places have been added</h2> `;
     }
+
+    // Do some simplistic sums to see if things have changed for refresh-triggering
     const hideoutLength = this.hideouts?.length ? this.hideouts?.length : 0;
-    const discoveryLength = this.discoveries?.length
-      ? this.discoveries?.length
-      : 0;
+    const discoveryLength = this.hideouts?.filter(
+      h => h.discovered === true
+    ).length;
+
     return html`
       <div class="outer">
         <div class="map">
@@ -142,7 +144,6 @@ class MapView extends BaseElement {
           <hidey-holes
             count=${hideoutLength + discoveryLength}
             .points="${this.hideouts}"
-            .discoveries="${this.discoveries}"
             height="${height}"
             width="${width}"
           ></hidey-holes>
@@ -290,19 +291,18 @@ class MapView extends BaseElement {
     switch (event.kind) {
       case 'NEW_GAME':
         this.positions = {};
-        this.discoveries = [];
         this.seeks = [];
-        this.hideouts = Object.values(event.hiders).map(place =>
-          this.coordinateConverter.getCoordinatesForPlace(this.getPlace(place))
-        );
+        this.hideouts = Object.values(event.hiders).map(place => ({
+          name: place,
+          coords: this.coordinateConverter.getCoordinatesForPlace(
+            this.getPlace(place)
+          ),
+        }));
         break;
       case 'PLAYER_DISCOVERED': {
         this.positions[event.place] = 'discovery';
-        this.discoveries.unshift(
-          this.coordinateConverter.getCoordinatesForPlace(
-            this.getPlace(event.place)
-          )
-        );
+        const hideout = this.hideouts.find(place => place.name === event.place);
+        if (hideout) hideout.discovered = true;
         break;
         // Do we want to wipe this?
       }

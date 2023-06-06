@@ -70,5 +70,10 @@
       "prettier --write"
     ]
   },
-  "customElements": "custom-elements.json"
+  "customElements": "custom-elements.json",
+  "main": "rollup.config.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": []
 }
