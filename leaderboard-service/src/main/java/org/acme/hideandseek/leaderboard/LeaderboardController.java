@@ -4,6 +4,7 @@ import io.quarkus.redis.datasource.sortedset.ScoredValue;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Multi;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.ws.rs.Produces;
@@ -34,5 +35,10 @@ public class LeaderboardController {
                 Multi.createFrom().ticks().every(Duration.ofSeconds(10))
                         .map(x -> List.of())
         );
+    }
+
+    @PostMapping("/leaderboard")
+    public void reset() {
+        leaderboard.clearAllScores();
     }
 }

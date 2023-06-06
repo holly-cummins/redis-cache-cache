@@ -50,4 +50,8 @@ public class LeaderboardService {
     public Multi<List<ScoredValue<String>>> getLeaderboardStream() {
         return stream;
     }
+
+    public void clearAllScores() {
+        redis.key().del(KEY);
+    }
 }
