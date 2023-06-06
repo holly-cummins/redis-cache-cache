@@ -310,7 +310,7 @@ class MapView extends BaseElement {
         if (!this.seeks) {
           this.seeks = [];
         }
-        this.seeks.unshift({
+        this.seeks.push({
           to: this.coordinateConverter.getCoordinatesForPlace(
             this.getPlace(event.destination)
           ),

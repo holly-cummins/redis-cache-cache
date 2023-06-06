@@ -39,7 +39,9 @@ class SeekerPath extends BaseElement {
       width="${this.width}px"
     >
       ${Array.isArray(this.points) &&
-      this.points?.map((entry, i) => SeekerPath.plot(entry, i === 0))}
+      this.points?.map((entry, i) =>
+        SeekerPath.plot(entry, i === this.points.length - 1)
+      )}
     </svg>`;
     // isLast is checking the beginning of the array because they come in reverse order
   }
