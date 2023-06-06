@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { expect, fixture } from '@open-wc/testing';
 
-import '../../src/components/seeker-path.js';
+import '../../src/components/hiders.js';
 
 describe('Hiders', () => {
   let element;
@@ -29,10 +29,10 @@ describe('Hiders', () => {
         { from: [20, 0], to: [1, 12] },
       ];
 
-      element = await fixture(html` <seeker-path
+      element = await fixture(html` <hidey-holes
         .points="${data}"
         count="3"
-      ></seeker-path>`);
+      ></hidey-holes>`);
     });
 
     it('renders an svg', () => {
