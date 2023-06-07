@@ -12,7 +12,7 @@ https://github.com/holly-cummins/redis-cache-cache/assets/11509290/40ac6a6d-3fc4
 ## Prerequisites
 
 - Apache Maven
-- Java 19
+- Java 20
 - Docker
 
 # Quickstart
