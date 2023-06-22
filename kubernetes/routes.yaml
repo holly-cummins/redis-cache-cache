@@ -5,12 +5,12 @@ metadata:
   name: game-service
   labels:
     app.kubernetes.io/managed-by: quarkus
-    app.kubernetes.io/name: hide-and-seek-game-service
+    app.kubernetes.io/name: game-service
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
 spec:
   to:
     kind: Service
-    name: hide-and-seek-game-service
+    name: game-service
     weight: 100
   port:
     targetPort: http
@@ -25,12 +25,12 @@ metadata:
   name:  hide-and-seek
   labels:
     app.kubernetes.io/managed-by: quarkus
-    app.kubernetes.io/name: hide-and-seek-frontend
+    app.kubernetes.io/name: frontend
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
 spec:
   to:
     kind: Service
-    name: hide-and-seek-frontend
+    name: frontend
     weight: 100
   port:
     targetPort: http
@@ -45,12 +45,12 @@ metadata:
   name: leaderboard-service
   labels:
     app.kubernetes.io/managed-by: quarkus
-    app.kubernetes.io/name: hide-and-seek-leaderboard-service
+    app.kubernetes.io/name: leaderboard-service
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
 spec:
   to:
     kind: Service
-    name: hide-and-seek-leaderboard-service
+    name: leaderboard-service
     weight: 100
   port:
     targetPort: http
@@ -65,12 +65,12 @@ metadata:
   name: place-service
   labels:
     app.kubernetes.io/managed-by: quarkus
-    app.kubernetes.io/name: hide-and-seek-place-service
+    app.kubernetes.io/name: place-service
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
 spec:
   to:
     kind: Service
-    name: hide-and-seek-place-service
+    name: place-service
     weight: 100
   port:
     targetPort: http
@@ -85,12 +85,12 @@ metadata:
   name: player-service
   labels:
     app.kubernetes.io/managed-by: quarkus
-    app.kubernetes.io/name: hide-and-seek-player-service
+    app.kubernetes.io/name: player-service
     app.kubernetes.io/version: 1.0.0-SNAPSHOT
 spec:
   to:
     kind: Service
-    name: hide-and-seek-player-service
+    name: player-service
     weight: 100
   port:
     targetPort: http

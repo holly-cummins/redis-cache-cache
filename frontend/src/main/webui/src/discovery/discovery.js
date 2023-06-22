@@ -3,9 +3,9 @@ export class Discovery {
 
   static initialized = false;
 
-  async resolve(serviceName, currentLocation) {
+  async resolve(serviceName) {
     if (!this.initialized) {
-      await fetch(`/discovery?current=${currentLocation}`)
+      await fetch(`/discovery`)
         .then(resp => resp.json())
         .then(val => {
           Discovery.locations = val;

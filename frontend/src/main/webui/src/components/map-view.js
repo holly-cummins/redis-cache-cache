@@ -178,7 +178,7 @@ class MapView extends BaseElement {
 
   fetchData = async () => {
     try {
-      const loc = await this.discovery.resolve('place', window.location.href);
+      const loc = await this.discovery.resolve('place');
       const response = await fetch(`${loc}/places/`);
       this.places = await response?.json();
 
@@ -199,10 +199,7 @@ class MapView extends BaseElement {
   queryData = async e => {
     const name = e.detail?.place;
     try {
-      const location = await this.discovery.resolve(
-        'place',
-        window.location.href
-      );
+      const location = await this.discovery.resolve('place');
 
       const response = await fetch(`${location}/places/search?query=${name}`);
       if (response.status === 200) {
@@ -266,7 +263,7 @@ class MapView extends BaseElement {
   };
 
   async openConnection() {
-    const location = await this.discovery.resolve('game', window.location.href);
+    const location = await this.discovery.resolve('game');
 
     // Server side positions
     this.eventSource = new EventSource(`${location}/games/events`);
