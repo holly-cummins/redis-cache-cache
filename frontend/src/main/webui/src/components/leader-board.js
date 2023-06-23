@@ -81,10 +81,8 @@ class Leaderboard extends BaseElement {
 
   async fetchData() {
     try {
-      const location = await this.discovery.resolve(
-        'leaderboard',
-        window.location.href
-      );
+      const location = await this.discovery.resolve('leaderboard');
+      console.log('Location for leaderboard', location);
       const response = await fetch(`${location}/leaderboard/`);
       this.data = await response?.json();
     } catch (e) {
@@ -106,7 +104,7 @@ class Leaderboard extends BaseElement {
   async openConnection() {
     // Server side events
     this.eventSource = await this.discovery
-      .resolve('leaderboard', window.location.href)
+      .resolve('leaderboard')
       .then(location => new EventSource(`${location}/leaderboard/events`));
 
     this.eventSource.onmessage = this.onServerUpdate;

@@ -133,7 +133,8 @@ class EventTicker extends BaseElement {
   };
 
   async openConnection() {
-    const location = await this.discovery.resolve('game', window.location.href);
+    const location = await this.discovery.resolve('game');
+    console.log('Location for game:', location);
 
     const eventSource = new EventSource(`${location}/games/events`);
     eventSource.onmessage = this.onServerUpdate;
